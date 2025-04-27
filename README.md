@@ -26,8 +26,8 @@ N'hésitez pas à forker, contribuer ou proposer des améliorations !
 
 ## 📸 Aperçu de l'application
 ### Page d'accueil
-![Page d'accueil](screenshots/home_page.png)
+![Page d'accueil](screenshots/Home_Page.png)
 ### Création d'un abonnement
-![Création d'un abonnement](screenshots/create_subscription.png)
+![Création d'un abonnement](screenshots/Subscription.png)
 ### Statistiques des dépenses
-![Statistiques des dépenses](screenshots/expense_stats.png)
+![Statistiques des dépenses](screenshots/Statistics.png)

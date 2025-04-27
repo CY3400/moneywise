@@ -23,3 +23,11 @@ Money Wise est une application web développée en Java Spring Boot et MySQL, pe
 ## 📜 Licence
 Projet personnel réalisé dans le cadre de l'apprentissage et de l'amélioration continue.  
 N'hésitez pas à forker, contribuer ou proposer des améliorations !
+
+## 📸 Aperçu de l'application
+### Page d'accueil
+![Page d'accueil](screenshots/home_page.png)
+### Création d'un abonnement
+![Création d'un abonnement](screenshots/create_subscription.png)
+### Statistiques des dépenses
+![Statistiques des dépenses](screenshots/expense_stats.png)

@@ -28,7 +28,7 @@ document.addEventListener("DOMContentLoaded", function() {
         }
         if (subid.value == '' && (Group_Description.value != '' || description.value != '') && amount.value != '' && subscription_date.value != '' && is_Repeat.value != ''){
             const newSubscription = {
-                desc_id: desc,
+                descId: desc,
                 amount: amount.value,
                 paid: 0,
                 date_finance: subscription_date.value,
@@ -56,7 +56,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 .then(response => response.json())
                 .then(newData => {
                     const updatedSubscription = {
-                        desc_id: desc,
+                        descId: desc,
                         amount: amount.value,
                         paid: 0,
                         date_finance: subscription_date.value,

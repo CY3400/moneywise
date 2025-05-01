@@ -184,7 +184,7 @@ document.addEventListener("DOMContentLoaded", function() {
             fetch(`${apiUrl}/${subscriptionId}`)
                 .then(response => response.json())
                 .then(existingData => {
-                    description.value = existingData.description;
+                    Group_Description.value = existingData.descId;
                     amount.value = existingData.amount;
                     const dateObj = new Date(existingData.date_finance);
                     subscription_date.value = dateObj.toISOString().split('T')[0];

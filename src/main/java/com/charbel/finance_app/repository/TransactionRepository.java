@@ -22,10 +22,10 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
     @Query(value = "Select * from finance_db.DESCRIPTION order by description", nativeQuery = true)
     List<Description> findTransactionDescriptions();
 
-    @Query(value = "Select distinct month(date_transaction) as M from finance_db.transaction where cat_id != 1", nativeQuery = true)
+    @Query(value = "Select month(date_transaction) as M from finance_db.transaction where cat_id != 1 union Select month(date_finance) as M from finance_db.subscription", nativeQuery = true)
     List<Integer> findDistinctMonths();
 
-    @Query(value = "Select distinct year(date_transaction) as Y from finance_db.transaction where cat_id != 1", nativeQuery = true)
+    @Query(value = "Select distinct year(date_transaction) as Y from finance_db.transaction where cat_id != 1 union Select year(date_finance) as M from finance_db.subscription", nativeQuery = true)
     List<Integer> findDistinctYears();
 
     @Query(value = "select description, sum(amount) as amount from (select d.description, amount from finance_db.transaction t inner join finance_db.description d on d.id = t.desc_id where cat_id != 1 and desc_id != 1 and (month(date_transaction) = :month or :month is null) and (year(date_transaction) = :year or :year is null) union select d.description, amount from finance_db.subscription s inner join finance_db.description d on d.id = s.desc_id where (month(date_paid) = :month or :month is null) and (year(date_paid) = :year or :year is null) and date_paid is not null) as Grp group by description order by amount desc limit 5",nativeQuery = true)

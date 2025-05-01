@@ -28,6 +28,10 @@ public class BudgetService {
         if (totalGains == null) totalGains = (long) 0;
         if (totalDepenses == null) totalDepenses = (long) 0;
 
+        if(totalDepenses < 0){
+            totalDepenses *= -1;
+        }
+
         Long nouveauBudget = lastBudget + totalGains - totalDepenses;
 
         Budget newBudget = new Budget();

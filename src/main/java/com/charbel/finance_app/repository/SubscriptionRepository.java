@@ -22,7 +22,7 @@ public interface SubscriptionRepository extends JpaRepository<Subscription, Long
     @Query(value = "INSERT INTO SUBSCRIPTION(AMOUNT, DATE_FINANCE, DESC_ID, PAID, IS_REPEAT) SELECT AMOUNT, NOW(), DESC_ID, 0, 1 FROM SUBSCRIPTION WHERE IS_REPEAT = 1 AND ((MONTH(DATE_FINANCE) = MONTH(current_date())-1 AND MONTH(CURRENT_DATE()) != 1) OR (YEAR(DATE_FINANCE) = YEAR(current_date())-1 AND MONTH(CURRENT_DATE()) = 1))", nativeQuery = true)
     void insertSubscriptionsForNewMonth();
 
-    @Query(value="select d.description, amount, paid, is_repeat from finance_db.subscription sub inner join finance_db.description d on d.id = sub.desc_id WHERE MONTH(date_finance) = MONTH(CURRENT_DATE) AND YEAR(date_finance) = YEAR(CURRENT_DATE)",nativeQuery = true)
+    @Query(value="select sub.id, d.description, amount, paid, is_repeat from finance_db.subscription sub inner join finance_db.description d on d.id = sub.desc_id WHERE MONTH(date_finance) = MONTH(CURRENT_DATE) AND YEAR(date_finance) = YEAR(CURRENT_DATE)",nativeQuery = true)
     List<TotalSubscription> findSubscriptionsByMonth();
 
     @Query(value = "SELECT * FROM FINANCE_DB.DESCRIPTION WHERE ID IN (SELECT DESC_ID FROM FINANCE_DB.SUBSCRIPTION WHERE IS_REPEAT = 0 AND (MONTH(DATE_FINANCE) != MONTH(CURRENT_DATE) OR YEAR(DATE_FINANCE) != YEAR(CURRENT_DATE)))", nativeQuery = true)

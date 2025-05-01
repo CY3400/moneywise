@@ -1,16 +1,26 @@
 package com.charbel.finance_app.DTO;
 
 public class TotalSubscription {
+    private Long id;
     private String description;
     private Long amount;
     private int paid;
     private int isRepeat;
 
-    public TotalSubscription(String description, Long amount, int paid, int isRepeat){
+    public TotalSubscription(Long id, String description, Long amount, int paid, int isRepeat){
+        this.id = id;
         this.description = description;
         this.amount = amount;
         this.paid = paid;
         this.isRepeat = isRepeat;
+    }
+
+    public Long getId(){
+        return id;
+    }
+
+    public void setId(Long id){
+        this.id = id;
     }
 
     public String getDescription(){

@@ -1,0 +1,62 @@
+#CategoryForm, table{
+    border: 1px solid black;
+    width: 30%;
+    margin: 3% 35%;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    max-width: 600px;
+    margin: auto;
+    text-align: center;
+}
+
+button {
+    cursor: pointer;
+    min-width: 10%;
+    height: 5vh;
+    background: #191f5a;
+    color: white;
+    font-weight: bold;
+}
+
+#category_btn{
+    margin: 5% 0% 1% 0%;
+}
+
+h2{
+    text-align: center;
+}
+
+#Description_div{
+    display: inline-block;
+    width: 32%;
+}
+
+input{
+    height: 30px;
+    border-radius: 10px;
+    font-size: 18px;
+}
+
+label{
+    font-size: 20px;
+}
+
+table {
+    border-collapse: collapse;
+}
+
+table, th, td {
+    border: 1px solid #ddd;
+}
+
+th, td {
+    padding: 10px;
+    text-align: left;
+}
+
+th {
+    background-color: #191f5a;
+    color: white;
+}

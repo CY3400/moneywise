@@ -1,7 +1,7 @@
 #DescriptionForm, table{
     border: 1px solid black;
-    width: 30%;
-    margin: 3% 35%;
+    width: 40%;
+    margin: 3% 30%;
 }
 
 body {
@@ -28,13 +28,13 @@ h2{
     text-align: center;
 }
 
-#Description_div{
+#Description_div, #Type_div{
     display: inline-block;
-    width: 32%;
+    width: 48%;
 }
 
 input{
-    height: 30px;
+    /*height: 30px;*/
     border-radius: 10px;
     font-size: 18px;
 }

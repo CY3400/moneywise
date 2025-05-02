@@ -16,14 +16,14 @@
             <input type="text" id="description">
         </div>
         <div id="Type_div">
-            <input type="radio" id="transaction" name="type" value="1">
+            <input type="radio" id="transaction" name="types" value="1">
             <label for="transaction">Transaction</label><br>
-            <input type="radio" id="subscription" name="type" value="2">
+            <input type="radio" id="subscription" name="types" value="2">
             <label for="subscription">Subscription</label><br>
-            <input type="radio" id="both" name="type" value="3">
+            <input type="radio" id="both" name="types" value="3">
             <label for="both">Both</label><br>
         </div>
-        <input type="hidden" id="catid">
+        <input type="hidden" id="descid">
         <div id="Button_div">
             <button id="description_btn">Send</button>
         </div>
@@ -32,7 +32,8 @@
     <table id="DescriptionTable">
         <thead>
             <tr>
-                <th>Category</th>
+                <th>Description</th>
+                <th>Type</th>
                 <th>Actions</th>
             </tr>
         </thead>

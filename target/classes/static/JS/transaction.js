@@ -71,28 +71,8 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 
     addButton.addEventListener("click", function () {
-        var desc = '';
-        if (description.value == ''){
-            desc = Group_Description.value;
-        }
-        else{
-            const newDescription = {
-                description: description.value,
-                type: 2
-            }
-            fetch(descUrl, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(newDescription)
-            })
-            .then(response => response.json())
-            .then(data => {
-                desc = data.id;
-            })
-            .catch(error => console.error("Erreur lors de l'ajout :", error));
-        }
         const newTransaction = {
-            descId: desc,
+            descId: Group_Description.value,
             amount: amount.value,
             cat: cat.value,
             dateTransaction: transaction_date.value
@@ -100,7 +80,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
         console.log(newTransaction);
 
-        if (!traid.value && (Group_Description.value != '' || description.value != '') && amount.value != '' && transaction_date.value != '' && cat.value != '') {
+        if (!traid.value && Group_Description.value != '' && amount.value != '' && transaction_date.value != '' && cat.value != '') {
             fetch(apiUrl, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
@@ -109,14 +89,13 @@ document.addEventListener("DOMContentLoaded", function() {
             .then(response => response.json())
             .then(() => {
                 Group_Description.value = "";
-                description.value = "";
                 amount.value = "";
                 transaction_date.value = "";
                 cat.value = "";
                 loadTransactions();
             })
             .catch(error => console.error("Erreur lors de l'ajout :", error));
-        } else if (traid.value && (Group_Description.value != '' || description.value != '') && amount.value != '' && transaction_date.value != '' && cat.value != '') {
+        } else if (traid.value && Group_Description.value != '' && amount.value != '' && transaction_date.value != '' && cat.value != '') {
             fetch(`${apiUrl}/${traid.value}`, {
                 method: "PUT",
                 headers: { "Content-Type": "application/json" },
@@ -125,7 +104,6 @@ document.addEventListener("DOMContentLoaded", function() {
             .then(response => response.json())
             .then(() => {
                 Group_Description.value = "";
-                description.value = "";
                 amount.value = "";
                 transaction_date.value = "";
                 traid.value = "";

@@ -6,29 +6,9 @@ document.addEventListener("DOMContentLoaded", function() {
     const SubscriptionTable = document.querySelector("#SubscriptionTable tbody");
 
     addButton.addEventListener("click", function () {
-        var desc = '';
-        if (description.value == ''){
-            desc = Group_Description.value;
-        }
-        else{
-            const newDescription = {
-                description: description.value,
-                type: 2
-            }
-            fetch(descUrl, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(newDescription)
-            })
-            .then(response => response.json())
-            .then(data => {
-                desc = data.id;
-            })
-            .catch(error => console.error("Erreur lors de l'ajout :", error));
-        }
-        if (subid.value == '' && (Group_Description.value != '' || description.value != '') && amount.value != '' && subscription_date.value != '' && is_Repeat.value != ''){
+        if (subid.value == '' && Group_Description.value != '' && amount.value != '' && subscription_date.value != '' && is_Repeat.value != ''){
             const newSubscription = {
-                descId: desc,
+                descId: Group_Description.value,
                 amount: amount.value,
                 paid: 0,
                 date_finance: subscription_date.value,
@@ -44,19 +24,18 @@ document.addEventListener("DOMContentLoaded", function() {
             .then(() => loadSubscriptions())
             .then(() => {
                 Group_Description.value = "";
-                description.value = "";
                 amount.value = "";
                 subscription_date.value = "";
                 is_Repeat.value = "";
             })
             .catch(error => console.error("Erreur lors de l'ajout :", error));
         }
-        else if (subid.value != '' && (Group_Description.value != '' || description.value != '') && amount.value != '' && subscription_date.value != '' && is_Repeat.value != ''){
+        else if (subid.value != '' && Group_Description.value != '' && amount.value != '' && subscription_date.value != '' && is_Repeat.value != ''){
             fetch(`${apiUrl}/${subid.value}`)
                 .then(response => response.json())
                 .then(newData => {
                     const updatedSubscription = {
-                        descId: desc,
+                        descId: Group_Description.value,
                         amount: amount.value,
                         paid: 0,
                         date_finance: subscription_date.value,
@@ -72,7 +51,6 @@ document.addEventListener("DOMContentLoaded", function() {
                 .then(() => loadSubscriptions())
                 .then(() => {
                     Group_Description.value = "";
-                    description.value = "";
                     amount.value = "";
                     subscription_date.value = "";
                     subid.value = "";

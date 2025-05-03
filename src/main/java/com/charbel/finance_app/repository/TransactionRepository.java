@@ -19,7 +19,7 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
     @Query(value="SELECT t.id, d.Description, amount, c.description as category FROM finance_db.Transaction t INNER JOIN finance_db.Description d on d.id = t.desc_id INNER JOIN finance_db.Category c on c.id = t.cat_id WHERE MONTH(t.date_transaction) = MONTH(CURRENT_DATE) AND YEAR(t.date_transaction) = YEAR(CURRENT_DATE)",nativeQuery = true)
     List<TotalTransaction> findTransactionsByMonth();
 
-    @Query(value = "Select * from finance_db.DESCRIPTION order by description", nativeQuery = true)
+    @Query(value = "Select * from finance_db.DESCRIPTION where type in (1,3) order by description", nativeQuery = true)
     List<Description> findTransactionDescriptions();
 
     @Query(value = "Select month(date_transaction) as M from finance_db.transaction where cat_id != 1 union Select month(date_finance) as M from finance_db.subscription", nativeQuery = true)

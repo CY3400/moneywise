@@ -25,7 +25,7 @@ public interface SubscriptionRepository extends JpaRepository<Subscription, Long
     @Query(value="select sub.id, d.description, amount, paid, is_repeat from finance_db.subscription sub inner join finance_db.description d on d.id = sub.desc_id WHERE MONTH(date_finance) = MONTH(CURRENT_DATE) AND YEAR(date_finance) = YEAR(CURRENT_DATE)",nativeQuery = true)
     List<TotalSubscription> findSubscriptionsByMonth();
 
-    @Query(value = "SELECT * FROM FINANCE_DB.DESCRIPTION WHERE ID IN (SELECT DESC_ID FROM FINANCE_DB.SUBSCRIPTION)", nativeQuery = true)
+    @Query(value = "SELECT * FROM FINANCE_DB.DESCRIPTION WHERE type in (1,3)", nativeQuery = true)
     List<Description> findSubscriptionsByDescription();
 
     @Query(value = "Select count(*) from finance_db.subscription where date_finance = :date", nativeQuery = true)

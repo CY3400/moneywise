@@ -4,8 +4,7 @@ document.addEventListener("DOMContentLoaded", function(){
     const addButton=document.getElementById("description_btn");
     const DescriptionTable = document.querySelector("#DescriptionTable tbody");
     const description = document.getElementById("description");
-    const selectedType = document.querySelector('input[name="types"]:checked');
-
+    
     var type =""
 
     function loadDescriptions() {
@@ -62,12 +61,13 @@ document.addEventListener("DOMContentLoaded", function(){
                         radio.checked = radio.value === String(existingData.type);
                     });
                 })
-                .then(console.log("Done"))
                 .catch(error => console.error("Erreur lors de la récupération :", error));
         }
     });
 
     addButton.addEventListener("click", function () {
+        const selectedType = document.querySelector('input[name="types"]:checked');
+
         if (descid.value == "" && description.value != "" && selectedType){
             const newDescription = {
                 description: description.value,
@@ -83,7 +83,7 @@ document.addEventListener("DOMContentLoaded", function(){
             .then(() => {
                 description.value = "";
                 document.querySelectorAll('input[name="types"]').forEach(radio => radio.checked = false);
-                loadCategories();
+                loadDescriptions();
             })
             .catch(error => console.error("Erreur lors de l'ajout :", error));
         }
@@ -102,7 +102,7 @@ document.addEventListener("DOMContentLoaded", function(){
                     });
                 })
                 .then(response => response.json())
-                .then(() => loadCategories())
+                .then(() => loadDescriptions())
                 .then(() => {
                     description.value = "";
                     document.querySelectorAll('input[name="types"]').forEach(radio => radio.checked = false);

@@ -35,6 +35,7 @@ public class DescriptionController {
             .orElseThrow(() -> new RuntimeException("Description not found with id " + id));
 
     description.setDescription(descriptionDetails.getDescription());
+    description.setType(descriptionDetails.getType());
 
     return descriptionRepository.save(description);
     }

@@ -4,8 +4,10 @@ import com.charbel.finance_app.model.Description;
 import com.charbel.finance_app.repository.DescriptionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.data.domain.Sort;
 
 import java.util.List;
+
 
 @RestController
 @RequestMapping("/api/description")
@@ -21,7 +23,7 @@ public class DescriptionController {
 
     @GetMapping
     public List<Description> getAllDescriptions() {
-        return descriptionRepository.findAll();
+        return descriptionRepository.findAll(Sort.by("description").ascending());
     }
 
     @GetMapping("/{id}")
@@ -48,5 +50,11 @@ public class DescriptionController {
         return "Description with ID " + id + " deleted successfully.";
     }
 
-
+    @GetMapping("/filter")
+    public List<Description> findDescriptionByNameOrType(
+        @RequestParam(required = false) String description,
+        @RequestParam(required = false) Integer type) {
+        return descriptionRepository.findDescriptionByNameOrType(description, type);
+    }
+    
 }

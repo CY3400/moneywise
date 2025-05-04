@@ -4,6 +4,10 @@ document.addEventListener("DOMContentLoaded", function(){
     const addButton=document.getElementById("description_btn");
     const DescriptionTable = document.querySelector("#DescriptionTable tbody");
     const description = document.getElementById("description");
+    const desc_error = document.getElementById("desc_error");
+    const desc_label = document.getElementById("desc_label");
+    const type_error = document.getElementById("type_error");
+    const type_label = document.getElementById("type_label");
 
     function buildQueryParams(description, type) {
         const params = new URLSearchParams();
@@ -50,8 +54,8 @@ document.addEventListener("DOMContentLoaded", function(){
                 <td>${description.description}</td>
                 <td>${type}</td>
                 <td>
-                    <button class="modify-btn" data-id="${description.id}">Modify</button>
-                    <button class="delete-btn" data-id="${description.id}">Delete</button>
+                    <button class="modify-btn btn" data-id="${description.id}">Modify</button>
+                    <button class="delete-btn btn" data-id="${description.id}">Delete</button>
                 </td>
             `;
             DescriptionTable.appendChild(row);
@@ -113,50 +117,82 @@ document.addEventListener("DOMContentLoaded", function(){
         }
     });
 
+    function checkNull(desc, type){
+        var result = 1;
+
+        if(desc == ""){
+            desc_error.style.display='contents';
+            description.classList.add('border','border-danger');
+            desc_label.classList.add('text-danger');
+            result = 0;
+        }
+        else{
+            desc_error.style.display='none';
+            description.classList.remove('border','border-danger');
+            desc_label.classList.remove('text-danger');
+        }
+
+        if(!type){
+            type_error.style.display='contents';
+            type_label.classList.add('text-danger');
+            result = 0;
+        }
+        else{
+            type_error.style.display='none';
+            type_label.classList.remove('text-danger');
+        }
+
+        return result;
+    }
+
     addButton.addEventListener("click", function () {
         const selectedType = document.querySelector('input[name="types"]:checked');
 
-        if (descid.value == "" && description.value != "" && selectedType){
-            const newDescription = {
-                description: description.value,
-                type: selectedType.value
-            };
-    
-            fetch(apiUrl, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(newDescription)
-            })
-            .then(response => response.json())
-            .then(() => {
-                description.value = "";
-                document.querySelectorAll('input[name="types"]').forEach(radio => radio.checked = false);
-                loadDescriptions();
-            })
-            .catch(error => console.error("Erreur lors de l'ajout :", error));
-        }
-        else if (descid.value != "" && description.value != "" && selectedType){
-            fetch(`${apiUrl}/${descid.value}`)
-                .then(response => response.json())
-                .then(newData => {
-                    const updatedDescription = {
-                        description: description.value,
-                        type: selectedType.value
-                    };
-                    return fetch(`${apiUrl}/${descid.value}`, {
-                        method: "PUT",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify(updatedDescription)
-                    });
+        var notNull = checkNull(description.value, selectedType);
+
+        if(notNull == 1){
+            if (descid.value == "") {
+                const newDescription = {
+                    description: description.value,
+                    type: selectedType.value
+                };
+        
+                fetch(apiUrl, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(newDescription)
                 })
                 .then(response => response.json())
-                .then(() => loadDescriptions())
                 .then(() => {
                     description.value = "";
                     document.querySelectorAll('input[name="types"]').forEach(radio => radio.checked = false);
-                    descid.value = "";
+                    loadDescriptions();
                 })
-                .catch(error => console.error("Erreur lors de la mise à jour :", error));
+                .catch(error => console.error("Erreur lors de l'ajout :", error));
+            }
+            else {
+                fetch(`${apiUrl}/${descid.value}`)
+                    .then(response => response.json())
+                    .then(newData => {
+                        const updatedDescription = {
+                            description: description.value,
+                            type: selectedType.value
+                        };
+                        return fetch(`${apiUrl}/${descid.value}`, {
+                            method: "PUT",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify(updatedDescription)
+                        });
+                    })
+                    .then(response => response.json())
+                    .then(() => loadDescriptions())
+                    .then(() => {
+                        description.value = "";
+                        document.querySelectorAll('input[name="types"]').forEach(radio => radio.checked = false);
+                        descid.value = "";
+                    })
+                    .catch(error => console.error("Erreur lors de la mise à jour :", error));
+            }
         }
     });
 

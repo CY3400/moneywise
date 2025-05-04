@@ -1,62 +1,38 @@
-#DescriptionForm, table{
-    border: 1px solid black;
-    width: 40%;
-    margin: 3% 30%;
-}
-
-body {
-    font-family: Arial, sans-serif;
-    max-width: 600px;
-    margin: auto;
-    text-align: center;
-}
-
 button {
-    cursor: pointer;
-    min-width: 10%;
-    height: 5vh;
-    background: #191f5a;
-    color: white;
-    font-weight: bold;
-}
-
-#description_btn{
-    margin: 5% 0% 1% 0%;
-}
-
-h2{
-    text-align: center;
-}
-
-#Description_div, #Type_div{
-    display: inline-block;
-    width: 48%;
+    background: #191f5a !important;
+    color: white !important;
+    font-weight: bold !important;
 }
 
 input{
-    /*height: 30px;*/
-    border-radius: 10px;
-    font-size: 18px;
+    font-size: 18px !important;
 }
 
 label{
-    font-size: 20px;
-}
-
-table {
-    border-collapse: collapse;
+    font-size: 20px !important;
 }
 
 table, th, td {
-    border: 1px solid #ddd;
-}
-
-th, td {
-    padding: 10px;
-    text-align: left;
+    border-color: #ddd !important;
 }
 
 th {
-    background-color: #191f5a;
-    color: white;
+    background-color: #191f5a !important;
+    color: white !important;
+}
+
+label, h2{
+    color: #191f5a !important;
+}
+
+.form-label{
+    font-weight: bold !important;
+}
+
+#DescriptionForm, .form-control{
+    border-color: #191f5a !important;
+}
+
+#desc_error, #type_error{
+    display: none;
 }

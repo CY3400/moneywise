@@ -54,8 +54,8 @@ document.addEventListener("DOMContentLoaded", function(){
                 <td>${description.description}</td>
                 <td>${type}</td>
                 <td>
-                    <button class="modify-btn btn" data-id="${description.id}">Modify</button>
-                    <button class="delete-btn btn" data-id="${description.id}">Delete</button>
+                    <button class="modify-btn btn bg-primary" data-id="${description.id}">Modify</button>
+                    <button class="delete-btn btn bg-primary" data-id="${description.id}">Delete</button>
                 </td>
             `;
             DescriptionTable.appendChild(row);

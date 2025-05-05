@@ -1,43 +1,7 @@
-button {
-    background: #191f5a !important;
-    color: white !important;
-    font-weight: bold !important;
-}
-
-input{
-    font-size: 18px !important;
-}
-
-label{
-    font-size: 20px !important;
-}
-
-table, th, td {
-    border-color: #ddd !important;
-}
-
-th {
-    background-color: #191f5a !important;
-    color: white !important;
-}
-
-label, h2{
-    color: #191f5a !important;
-}
-
-.form-label{
-    font-weight: bold !important;
-}
-
-#DescriptionForm, .form-control{
+#DescriptionForm{
     border-color: #191f5a !important;
 }
 
 #desc_error, #type_error{
     display: none;
-}
-
-.form-check-input:checked{
-    border-color: #191f5a !important;
-    background-color: #191f5a !important;
 }

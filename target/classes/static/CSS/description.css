@@ -36,3 +36,8 @@ label, h2{
 #desc_error, #type_error{
     display: none;
 }
+
+.form-check-input:checked{
+    border-color: #191f5a !important;
+    background-color: #191f5a !important;
+}

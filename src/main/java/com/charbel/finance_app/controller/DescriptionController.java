@@ -38,6 +38,7 @@ public class DescriptionController {
 
     description.setDescription(descriptionDetails.getDescription());
     description.setType(descriptionDetails.getType());
+    description.setStatus(descriptionDetails.getStatus());
 
     return descriptionRepository.save(description);
     }

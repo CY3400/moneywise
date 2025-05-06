@@ -14,6 +14,8 @@ public class Description {
 
     private int type;
 
+    private int status = 2;
+
     public Description() {}
 
     public Description(String description, int type) {
@@ -29,4 +31,7 @@ public class Description {
 
     public int getType() { return type; }
     public void setType(int type) { this.type = type; }
+
+    public int getStatus() { return status; }
+    public void setStatus(int status) { this.status = status; }
 }

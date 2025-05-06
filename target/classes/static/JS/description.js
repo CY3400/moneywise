@@ -44,9 +44,9 @@ document.addEventListener("DOMContentLoaded", function(){
             if (description.type == 1) {
                 type = "Transaction";
             } else if (description.type == 2) {
-                type = "Subscription";
+                type = "Abonnement";
             } else {
-                type = "Both";
+                type = "Les deux";
             }
 
             const row = document.createElement("tr");
@@ -54,8 +54,8 @@ document.addEventListener("DOMContentLoaded", function(){
                 <td>${description.description}</td>
                 <td>${type}</td>
                 <td>
-                    <button class="modify-btn btn bg-primary" data-id="${description.id}">Modify</button>
-                    <button class="delete-btn btn bg-primary" data-id="${description.id}">Delete</button>
+                    <button class="modify-btn btn bg-primary" data-id="${description.id}">Modifier</button>
+                    <button class="delete-btn btn bg-primary" data-value="${description.status}" data-id="${description.id}">${description.status == 2 ? 'Désactiver' : 'Activer'}</button>
                 </td>
             `;
             DescriptionTable.appendChild(row);
@@ -91,12 +91,28 @@ document.addEventListener("DOMContentLoaded", function(){
     DescriptionTable.addEventListener("click", function (event) {
         if (event.target.classList.contains("delete-btn")) {
             const descId = event.target.dataset.id;
+            const descValue = event.target.dataset.value;
 
-            fetch(`${apiUrl}/${descId}`, {
-                method: "DELETE",
-            })
+            var status = "";
+
+            descValue == 1 ? status = 2 : status = 1;
+
+            fetch(`${apiUrl}/${descId}`)
+                .then(response => response.json())
+                .then(newData => {
+                    const updatedDescription = {
+                        ...newData,
+                        status: status
+                    };
+                    return fetch(`${apiUrl}/${descId}`, {
+                        method: "PUT",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify(updatedDescription)
+                    });
+                })
+                .then(response => response.json())
                 .then(() => loadDescriptions())
-                .catch(error => console.error("Erreur lors de la suppression:", error));
+                .catch(error => console.error("Erreur lors de la mise à jour :", error));
         }
     });
 
@@ -154,7 +170,8 @@ document.addEventListener("DOMContentLoaded", function(){
             if (descid.value == "") {
                 const newDescription = {
                     description: description.value,
-                    type: selectedType.value
+                    type: selectedType.value,
+                    status: 2
                 };
         
                 fetch(apiUrl, {
@@ -175,6 +192,7 @@ document.addEventListener("DOMContentLoaded", function(){
                     .then(response => response.json())
                     .then(newData => {
                         const updatedDescription = {
+                            ...newData,
                             description: description.value,
                             type: selectedType.value
                         };

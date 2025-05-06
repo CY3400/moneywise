@@ -199,7 +199,7 @@ document.addEventListener("DOMContentLoaded", function(){
     description.addEventListener("keyup", function(){
         const selectedType = document.querySelector('input[name="types"]:checked');
 
-        loadDescriptions(description.value,selectedType);
+        loadDescriptions(description.value,selectedType ? selectedType.value : null);
     });
 
     document.querySelectorAll('input[name="types"]').forEach(radio => {

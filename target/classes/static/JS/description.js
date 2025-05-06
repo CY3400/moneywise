@@ -97,6 +97,8 @@ document.addEventListener("DOMContentLoaded", function(){
 
             descValue == 1 ? status = 2 : status = 1;
 
+            const selectedType = document.querySelector('input[name="types"]:checked');
+
             fetch(`${apiUrl}/${descId}`)
                 .then(response => response.json())
                 .then(newData => {
@@ -111,7 +113,7 @@ document.addEventListener("DOMContentLoaded", function(){
                     });
                 })
                 .then(response => response.json())
-                .then(() => loadDescriptions())
+                .then(() => loadDescriptions(description.value,selectedType ? selectedType.value : null))
                 .catch(error => console.error("Erreur lors de la mise à jour :", error));
         }
     });
@@ -203,12 +205,12 @@ document.addEventListener("DOMContentLoaded", function(){
                         });
                     })
                     .then(response => response.json())
-                    .then(() => loadDescriptions())
                     .then(() => {
                         description.value = "";
                         document.querySelectorAll('input[name="types"]').forEach(radio => radio.checked = false);
                         descid.value = "";
                     })
+                    .then(() => loadDescriptions())
                     .catch(error => console.error("Erreur lors de la mise à jour :", error));
             }
         }
@@ -217,11 +219,14 @@ document.addEventListener("DOMContentLoaded", function(){
     description.addEventListener("keyup", function(){
         const selectedType = document.querySelector('input[name="types"]:checked');
 
+        currentPage = 1;
+
         loadDescriptions(description.value,selectedType ? selectedType.value : null);
     });
 
     document.querySelectorAll('input[name="types"]').forEach(radio => {
         radio.addEventListener('change', function () {
+            currentPage = 1;
             loadDescriptions(description.value,this.value);
         });
     });

@@ -130,6 +130,8 @@ document.addEventListener("DOMContentLoaded", function(){
                     document.querySelectorAll('input[name="types"]').forEach(radio => {
                         radio.checked = radio.value === String(existingData.type);
                     });
+
+                    loadDescriptions(existingData.description, existingData.type)
                 })
                 .catch(error => console.error("Erreur lors de la récupération :", error));
         }

@@ -8680,8 +8680,8 @@ textarea.form-control-lg {
 }
 
 .bg-primary {
-  background-color: var(--bs-primary);
-  color: white;
+  background-color: var(--bs-primary) !important;
+  color: white !important;
   font-weight: bold;
 }
 

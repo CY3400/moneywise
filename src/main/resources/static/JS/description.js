@@ -15,8 +15,6 @@ document.addEventListener("DOMContentLoaded", function(){
         if (type) params.append("type", type);
         return params.toString();
     }
-    
-    var type =""
 
     let currentPage = 1;
     const itemsPerPage = 5;
@@ -40,22 +38,19 @@ document.addEventListener("DOMContentLoaded", function(){
         const pageData = allData.slice(startIndex, endIndex);
 
         pageData.forEach(description => {
-            let type = "";
-            if (description.type == 1) {
-                type = "Transaction";
-            } else if (description.type == 2) {
-                type = "Abonnement";
-            } else {
-                type = "Les deux";
-            }
-
             const row = document.createElement("tr");
             row.innerHTML = `
-                <td>${description.description}</td>
-                <td>${type}</td>
+                <td contenteditable="true" data-id=${description.id} class="editable-name">${description.description}</td>
+                <td>
+                    <select class="type-select" data-id="${description.id}">
+                        <option value="1" ${description.type == 1 ? "selected" : ""}>Transaction</option>
+                        <option value="2" ${description.type == 2 ? "selected" : ""}>Abonnement</option>
+                        <option value="3" ${description.type == 3 ? "selected" : ""}>Les deux</option>
+                    </select>
+                </td>
                 <td>
                     <button class="modify-btn btn bg-primary" data-id="${description.id}">Modifier</button>
-                    <button class="delete-btn btn bg-primary" data-value="${description.status}" data-id="${description.id}">${description.status == 2 ? 'Désactiver' : 'Activer'}</button>
+                    <button class="toggle-btn btn bg-primary" data-value="${description.status}" data-id="${description.id}">${description.status == 2 ? 'Désactiver' : 'Activer'}</button>
                 </td>
             `;
             DescriptionTable.appendChild(row);
@@ -89,15 +84,15 @@ document.addEventListener("DOMContentLoaded", function(){
 
 
     DescriptionTable.addEventListener("click", function (event) {
-        if (event.target.classList.contains("delete-btn")) {
-            const descId = event.target.dataset.id;
-            const descValue = event.target.dataset.value;
+        let descId, descValue, status = null;
 
-            var status = "";
+        const selectedType = document.querySelector('input[name="types"]:checked');
+
+        if (event.target.classList.contains("toggle-btn")) {
+            descId = event.target.dataset.id;
+            descValue = event.target.dataset.value;
 
             descValue == 1 ? status = 2 : status = 1;
-
-            const selectedType = document.querySelector('input[name="types"]:checked');
 
             fetch(`${apiUrl}/${descId}`)
                 .then(response => response.json())
@@ -116,24 +111,48 @@ document.addEventListener("DOMContentLoaded", function(){
                 .then(() => loadDescriptions(description.value,selectedType ? selectedType.value : null))
                 .catch(error => console.error("Erreur lors de la mise à jour :", error));
         }
-    });
+        else if (event.target.classList.contains("modify-btn")) {
+            descId = event.target.dataset.id;
+            const row = event.target.closest("tr");
+            const nameCell = row.querySelector(".editable-name");
+            const newDescription = nameCell.textContent.trim();
+            const typeSelect = row.querySelector(".type-select");
+            const newType = parseInt(typeSelect.value);
 
-    DescriptionTable.addEventListener("click", function (event) {
-        const descId = event.target.dataset.id;
+            if(newDescription === ""){
+                return;
+            }
 
-        if (event.target.classList.contains("modify-btn")) {
             fetch(`${apiUrl}/${descId}`)
                 .then(response => response.json())
                 .then(existingData => {
-                    description.value = existingData.description;
-                    descid.value = descId;
-                    document.querySelectorAll('input[name="types"]').forEach(radio => {
-                        radio.checked = radio.value === String(existingData.type);
-                    });
-
-                    loadDescriptions(existingData.description, existingData.type)
+                    const updatedData = {
+                        ...existingData,
+                        description: newDescription,
+                        type: newType
+                    };
+                    
+                    return fetch(`${apiUrl}/${descId}`, {
+                        method: "PUT",
+                        headers: {"Content-Type": "application/json"},
+                        body: JSON.stringify(updatedData)
+                    })
+                })
+                .then(() => {
+                    loadDescriptions(description.value,selectedType ? selectedType.value : null);
                 })
                 .catch(error => console.error("Erreur lors de la récupération :", error));
+        }
+    });
+
+    DescriptionTable.addEventListener("input", function(event){
+        if(event.target.classList.contains("editable-name")){
+            const row = event.target.closest("tr");
+            row.classList.add("modified-row");
+
+            if(!event.target.querySelector(".modified-indicator")){
+                event.target.innerHTML += ' <span class="modified-indicator" title="Modified">✏️</span>'
+            }
         }
     });
 
@@ -171,50 +190,24 @@ document.addEventListener("DOMContentLoaded", function(){
         var notNull = checkNull(description.value, selectedType);
 
         if(notNull == 1){
-            if (descid.value == "") {
-                const newDescription = {
-                    description: description.value,
-                    type: selectedType.value,
-                    status: 2
-                };
-        
-                fetch(apiUrl, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(newDescription)
-                })
-                .then(response => response.json())
-                .then(() => {
-                    description.value = "";
-                    document.querySelectorAll('input[name="types"]').forEach(radio => radio.checked = false);
-                    loadDescriptions();
-                })
-                .catch(error => console.error("Erreur lors de l'ajout :", error));
-            }
-            else {
-                fetch(`${apiUrl}/${descid.value}`)
-                    .then(response => response.json())
-                    .then(newData => {
-                        const updatedDescription = {
-                            ...newData,
-                            description: description.value,
-                            type: selectedType.value
-                        };
-                        return fetch(`${apiUrl}/${descid.value}`, {
-                            method: "PUT",
-                            headers: { "Content-Type": "application/json" },
-                            body: JSON.stringify(updatedDescription)
-                        });
-                    })
-                    .then(response => response.json())
-                    .then(() => {
-                        description.value = "";
-                        document.querySelectorAll('input[name="types"]').forEach(radio => radio.checked = false);
-                        descid.value = "";
-                    })
-                    .then(() => loadDescriptions())
-                    .catch(error => console.error("Erreur lors de la mise à jour :", error));
-            }
+            const newDescription = {
+                description: description.value,
+                type: selectedType.value,
+                status: 2
+            };
+    
+            fetch(apiUrl, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(newDescription)
+            })
+            .then(response => response.json())
+            .then(() => {
+                description.value = "";
+                document.querySelectorAll('input[name="types"]').forEach(radio => radio.checked = false);
+                loadDescriptions();
+            })
+            .catch(error => console.error("Erreur lors de l'ajout :", error));
         }
     });
 

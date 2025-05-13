@@ -40,9 +40,9 @@ document.addEventListener("DOMContentLoaded", function(){
         pageData.forEach(description => {
             const row = document.createElement("tr");
             row.innerHTML = `
-                <td contenteditable="true" data-id=${description.id} class="editable-name">${description.description}</td>
+                <td contenteditable="true" spellcheck="false" data-id=${description.id} data-original=${description.description} class="editable-name">${description.description}</td>
                 <td>
-                    <select class="type-select" data-id="${description.id}">
+                    <select class="type-select" data-id="${description.id}" data-original=${description.type}>
                         <option value="1" ${description.type == 1 ? "selected" : ""}>Transaction</option>
                         <option value="2" ${description.type == 2 ? "selected" : ""}>Abonnement</option>
                         <option value="3" ${description.type == 3 ? "selected" : ""}>Les deux</option>
@@ -123,6 +123,10 @@ document.addEventListener("DOMContentLoaded", function(){
                 return;
             }
 
+            nameCell.classList.remove("modified-cell");
+            typeSelect.classList.remove("modified-cell");
+            row.classList.remove("modified-row");
+
             fetch(`${apiUrl}/${descId}`)
                 .then(response => response.json())
                 .then(existingData => {
@@ -143,16 +147,53 @@ document.addEventListener("DOMContentLoaded", function(){
                 })
                 .catch(error => console.error("Erreur lors de la récupération :", error));
         }
+
+        const td = event.target.closest("td");
+
+        if(td){
+            const select = td.querySelector("select");
+
+            if(select){
+                select.focus();
+                select.click();
+            }
+        }
     });
 
-    DescriptionTable.addEventListener("input", function(event){
-        if(event.target.classList.contains("editable-name")){
-            const row = event.target.closest("tr");
-            row.classList.add("modified-row");
+    function updateRowModificationStatus(row) {
+        const nameCell = row.querySelector(".editable-name");
+        const typeSelect = row.querySelector(".type-select");
+        const typeTd = typeSelect.closest("td");
 
-            if(!event.target.querySelector(".modified-indicator")){
-                event.target.innerHTML += ' <span class="modified-indicator" title="Modified">✏️</span>'
-            }
+        const originalName = nameCell.dataset.original.trim();
+        const currentName = nameCell.textContent.trim();
+
+        const originalType = typeSelect.dataset.original;
+        const currentType = typeSelect.value;
+
+        const nameChanged = originalName !== currentName;
+        const typeChanged = originalType !== currentType;
+
+        if (nameChanged || typeChanged) {
+            row.classList.add("modified-row");
+        } else {
+            row.classList.remove("modified-row");
+        }
+
+        nameCell.classList.toggle("modified-cell", nameChanged);
+        typeTd.classList.toggle("modified-cell", typeChanged);
+    }
+
+
+    DescriptionTable.addEventListener("input", (event) =>{
+        if(event.target.classList.contains("editable-name")){
+            updateRowModificationStatus(event.target.closest("tr"));
+        }
+    });
+
+    DescriptionTable.addEventListener("change", function(event) {
+        if (event.target.classList.contains("type-select")) {
+            updateRowModificationStatus(event.target.closest("tr"));
         }
     });
 

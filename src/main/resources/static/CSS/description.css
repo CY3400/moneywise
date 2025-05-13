@@ -6,6 +6,27 @@
   background-color: #fff3cd !important;
 }
 
-.modified-indicator{
-  color:orange;
+.modified-cell {
+  position: relative;
+}
+
+.modified-cell::after {
+    content: "";
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    width: 8px;
+    height: 8px;
+    background-color: var(--bs-primary);
+    border-radius: 50%;
+}
+
+.type-select {
+  appearance: none;
+  border: none;
+  background: transparent;
+  width: 100%;
+  cursor: pointer;
+  padding: 0;
+  text-align: center;
 }

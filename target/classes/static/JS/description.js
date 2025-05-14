@@ -31,7 +31,9 @@ document.addEventListener("DOMContentLoaded", function(){
     }
 
     function renderPage() {
-        DescriptionTable.innerHTML = "";
+        DescriptionTable.innerHTML = `<tr id="no-data-message">
+                                        <td colspan="3" class="text-muted">Aucun résultat disponible</td>
+                                    </tr>`;
 
         const startIndex = (currentPage - 1) * itemsPerPage;
         const endIndex = startIndex + itemsPerPage;
@@ -57,6 +59,7 @@ document.addEventListener("DOMContentLoaded", function(){
         });
 
         updatePagination();
+        toggleNoDataMessage();
     }
 
     function updatePagination() {
@@ -201,24 +204,22 @@ document.addEventListener("DOMContentLoaded", function(){
         var result = 1;
 
         if(desc == ""){
-            desc_error.style.display='contents';
+            desc_error.classList.remove("d-none");
             description.classList.add('border','border-danger');
             desc_label.classList.add('text-danger');
             result = 0;
         }
         else{
-            desc_error.style.display='none';
             description.classList.remove('border','border-danger');
             desc_label.classList.remove('text-danger');
         }
 
         if(!type){
-            type_error.style.display='contents';
+            type_error.classList.remove("d-none");
             type_label.classList.add('text-danger');
             result = 0;
         }
         else{
-            type_error.style.display='none';
             type_label.classList.remove('text-danger');
         }
 
@@ -247,8 +248,9 @@ document.addEventListener("DOMContentLoaded", function(){
                 description.value = "";
                 document.querySelectorAll('input[name="types"]').forEach(radio => radio.checked = false);
                 loadDescriptions();
+                showToast('successToast');
             })
-            .catch(error => console.error("Erreur lors de l'ajout :", error));
+            .catch(showToast('errorToast'));
         }
     });
 
@@ -266,6 +268,24 @@ document.addEventListener("DOMContentLoaded", function(){
             loadDescriptions(description.value,this.value);
         });
     });
+
+    function toggleNoDataMessage() {
+        const tableBody = document.querySelector('#DescriptionTable tbody');
+        const noDataRow = document.getElementById('no-data-message');
+        const rows = tableBody.querySelectorAll('tr:not(#no-data-message)');
+
+        if (rows.length === 0) {
+            noDataRow.style.display = '';
+        } else {
+            noDataRow.style.display = 'none';
+        }
+    }
+
+    function showToast(toast) {
+        const toastElement = document.getElementById(toast);
+        const toast = new bootstrap.Toast(toastElement);
+        toast.show();
+    }
 
     loadDescriptions(null, null);
 })

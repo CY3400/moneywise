@@ -281,8 +281,8 @@ document.addEventListener("DOMContentLoaded", function(){
         }
     }
 
-    function showToast(toast) {
-        const toastElement = document.getElementById(toast);
+    function showToast(toasting) {
+        const toastElement = document.getElementById(toasting);
         const toast = new bootstrap.Toast(toastElement);
         toast.show();
     }

@@ -42,7 +42,7 @@ document.addEventListener("DOMContentLoaded", function(){
         pageData.forEach(description => {
             const row = document.createElement("tr");
             row.innerHTML = `
-                <td contenteditable="true" spellcheck="false" data-id=${description.id} data-original=${description.description} class="editable-name">${description.description}</td>
+                <td contenteditable="true" spellcheck="false" data-id=${description.id} data-original=${description.description.replace(/\s+/g, '')} class="editable-name">${description.description}</td>
                 <td>
                     <select class="type-select" data-id="${description.id}" data-original=${description.type}>
                         <option value="1" ${description.type == 1 ? "selected" : ""}>Transaction</option>
@@ -64,10 +64,20 @@ document.addEventListener("DOMContentLoaded", function(){
 
     function updatePagination() {
         const totalPages = Math.ceil(allData.length / itemsPerPage);
-        document.getElementById("pageInfo").textContent = `Page ${currentPage} sur ${totalPages}`;
 
-        document.getElementById("prevPage").disabled = currentPage === 1;
-        document.getElementById("nextPage").disabled = currentPage === totalPages;
+        document.getElementById("pageInfo").textContent =
+            `Page ${totalPages === 0 ? '0' : currentPage} sur ${totalPages}`;
+
+        const prevBtn = document.getElementById("prevPage");
+        const nextBtn = document.getElementById("nextPage");
+
+        if (totalPages === 0) {
+            prevBtn.disabled = true;
+            nextBtn.disabled = true;
+        } else {
+            prevBtn.disabled = currentPage === 1;
+            nextBtn.disabled = currentPage === totalPages;
+        }
     }
 
     document.getElementById("prevPage").addEventListener("click", () => {
@@ -163,19 +173,23 @@ document.addEventListener("DOMContentLoaded", function(){
         }
     });
 
+    function normalizeText(text) {
+        return text.replace(/\s+/g, '');
+    }
+
     function updateRowModificationStatus(row) {
         const nameCell = row.querySelector(".editable-name");
         const typeSelect = row.querySelector(".type-select");
         const typeTd = typeSelect.closest("td");
 
-        const originalName = nameCell.dataset.original.trim();
-        const currentName = nameCell.textContent.trim();
+        const originalName = normalizeText(nameCell.dataset.original);
+        const currentName = normalizeText(nameCell.textContent);
 
         const originalType = typeSelect.dataset.original;
         const currentType = typeSelect.value;
 
-        const nameChanged = originalName !== currentName;
-        const typeChanged = originalType !== currentType;
+        const nameChanged = originalName.toLowerCase() != currentName.toLowerCase();
+        const typeChanged = originalType != currentType;
 
         if (nameChanged || typeChanged) {
             row.classList.add("modified-row");
@@ -186,7 +200,6 @@ document.addEventListener("DOMContentLoaded", function(){
         nameCell.classList.toggle("modified-cell", nameChanged);
         typeTd.classList.toggle("modified-cell", typeChanged);
     }
-
 
     DescriptionTable.addEventListener("input", (event) =>{
         if(event.target.classList.contains("editable-name")){

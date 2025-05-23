@@ -6,7 +6,7 @@ document.addEventListener("DOMContentLoaded", function() {
     var month_select = document.getElementById("month");
     var year_select = document.getElementById("year");
 
-    const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+    const monthNames = ["Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"];
 
     function buildQueryParams(month, year) {
         const params = new URLSearchParams();
@@ -29,7 +29,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 
                 const defaultOption = document.createElement("option");
                 defaultOption.value = "";
-                defaultOption.textContent = "-- Select a month --";
+                defaultOption.textContent = "-- Choisir un mois --";
                 month.appendChild(defaultOption);
 
                 data.forEach(months => {
@@ -48,7 +48,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 
                 const defaultOption = document.createElement("option");
                 defaultOption.value = "";
-                defaultOption.textContent = "-- Select a year --";
+                defaultOption.textContent = "-- Choisir une année --";
                 year.appendChild(defaultOption);
 
                 data.forEach(years => {
@@ -103,7 +103,7 @@ document.addEventListener("DOMContentLoaded", function() {
     
                 const formattedDate = `${day} ${month} ${year}`;
     
-                MDD.innerHTML = `<b>Most Expensive Day:</b> ${formattedDate} (${d.amount} LBP)`;
+                MDD.innerHTML = `<b>Jour le plus dépensier:</b> ${formattedDate} (${d.amount} LBP)`;
             });
         } catch (error) {
             console.error(error);
@@ -120,7 +120,7 @@ document.addEventListener("DOMContentLoaded", function() {
             const data = await response.json();
     
             data.forEach(d => {
-                MC.innerHTML = `<b>Most Category:</b> ${d.description} (${d.count})`;
+                MC.innerHTML = `<b>Catégorie la plus présente:</b> ${d.description} (${d.count})`;
             });
         } catch (error) {
             console.error(error);

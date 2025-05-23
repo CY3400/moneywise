@@ -4,41 +4,65 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Statistics</title>
-    <link rel="stylesheet" href="../CSS/statistics.css">
+    <link rel="stylesheet" href="../CSS/common.css">
 </head>
 <body>
     <div id="navbar-container"></div>
-        
-    <div id="statForm">
-        <h2>Statistics</h2>
-        <div id="Month_Stats">
-            <label for="month">Month</label>
-            <select id="month"></select>
-        </div>
-        <div id="Year_Stats">
-            <label for="year">Year</label>
-            <select id="year"></select>
-        </div>
-        <div id="Stats_btn">
-            <button id="Stat_btn">Refresh</button>
-        </div>
-    </div>
-    <table id="statTable">
-        <thead>
-            <tr>
-                <th>Description</th>
-                <th>Amount</th>
-            </tr>
-        </thead>
-        <tbody></tbody>
-    </table>
 
-    <div id="statInfos">
-        <h2>Informations</h2>
-        <span id="MDD"></span><br><br>
-        <span id="MC"></span>
-    </div>
+    <main class="container mt-4" id="container">
+        <div class="row justify-content-center">
+            <div id="statForm" class="border border-2 rounded p-4 col-md-8 text-center">
+                <fieldset>
+                    <legend class="fs-5 fw-bold text-primary">Statistiques</legend>
+                    <div class="row justify-content-center">
+                        <div id="Month_Stats" class="mb-3 col-md-6 text-start">
+                            <label for="month" class="form-label">Mois</label>
+                            <select id="month" class="form-control"></select>
+                        </div>
+                        <div id="Year_Stats" class="mb-3 col-md-6 text-start">
+                            <label for="year" class="form-label">Année</label>
+                            <select id="year" class="form-control"></select>
+                        </div>
+                    </div>
+                </fieldset>
+                <div id="Stats_btn" class="text-center">
+                    <button id="Stat_btn" class="btn bg-primary">Rafraichir</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="row justify-content-center">
+            <div class="table-responsive mt-3 col-md-8 p-0">
+                <table id="statTable" class="table table-bordered text-center">
+                    <colgroup>
+                        <col style="width: 70%;">
+                        <col style="width: 30%;">
+                    </colgroup>
+                    <thead>
+                        <tr>
+                            <th scope="col">Description</th>
+                            <th scope="col">Amount</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="row justify-content-center">
+            <div id="statInfos" class="border border-2 rounded p-4 col-md-8 text-center">
+                <fieldset>
+                    <legend class="fs-5 fw-bold text-primary">Informations</legend>
+                    <div class="row justify-content-center">
+                        <span id="MDD" class="mb-3 col-md-12 text-start"></span>
+                        <span id="MC" class="mb-3 col-md-12 text-start"></span>
+                    </div>
+                </fieldset>
+            </div>
+        </div>
+    </main>
     <script src="../js/navbar.js"></script>
     <script src="../js/statistics.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" defer></script>
 </body>
 </html>

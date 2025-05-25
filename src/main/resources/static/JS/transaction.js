@@ -14,7 +14,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 
                 const defaultOption = document.createElement("option");
                 defaultOption.value = "";
-                defaultOption.textContent = "-- Select a category --";
+                defaultOption.textContent = "-- Choisir une catégorie --";
                 cat.appendChild(defaultOption);
 
                 data.forEach(cats => {
@@ -33,7 +33,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
                 const defaultOption = document.createElement("option");
                 defaultOption.value = "";
-                defaultOption.textContent = "-- Select a Description --";
+                defaultOption.textContent = "-- Choisir une Description --";
                 Group_Description.appendChild(defaultOption);
 
                 data.forEach(desc => {
@@ -53,8 +53,8 @@ document.addEventListener("DOMContentLoaded", function() {
                     const row = document.createElement("tr");
 
                     const buttons = `
-                        <button class="modify-btn" data-id="${transaction.id}">Modify</button>
-                        <button class="delete-btn" data-id="${transaction.id}">Delete</button>
+                        <button class="modify-btn btn bg-primary" data-id="${transaction.id}">Modifier</button>
+                        <button class="delete-btn btn bg-primary" data-id="${transaction.id}">Supprimer</button>
                     `;
 
                     row.innerHTML = `

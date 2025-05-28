@@ -1,16 +1,20 @@
 package com.charbel.finance_app.DTO;
 
+import java.sql.Date;
+
 public class TotalTransaction {
     private Long id;
     private String description;
     private Long amount;
     private String category;
+    private Date dateTransaction;
 
-    public TotalTransaction(Long id, String description, Long amount, String category){
+    public TotalTransaction(Long id, String description, Long amount, String category, Date dateTransaction){
         this.id = id;
         this.description = description;
         this.amount = amount;
         this.category = category;
+        this.dateTransaction = dateTransaction;
     }
 
     public Long getId(){
@@ -43,5 +47,13 @@ public class TotalTransaction {
 
     public void setCategory(String category){
         this.category = category;
+    }
+
+    public Date getDate(){
+        return dateTransaction;
+    }
+
+    public void setDate(Date dateTransaction){
+        this.dateTransaction = dateTransaction;
     }
 }

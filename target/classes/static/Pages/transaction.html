@@ -10,7 +10,7 @@
     <div id="navbar-container"></div>
     <main class="container mt-4" id="container">
         <div class="row justify-content-center">
-            <div id="TransactionForm" class="border border-2 rounded p-4 col-md-8 text-center">
+            <div id="TransactionForm" class="border border-2 rounded p-4 col-md-10 text-center">
                 <fieldset>
                     <legend class="fs-5 fw-bold text-primary">Transaction</legend>
 
@@ -45,18 +45,39 @@
         </div>
 
         <div class="row justify-content-center">
-            <div class="table-responsive mt-3 col-md-8 p-0">
+            <div id="TransactionFilter" class="border border-2 rounded mt-3 col-md-10 p-4 text-center">
+                <fieldset>
+                    <legend class="fs-5 fw-bold text-primary">Filtrer les Transactions</legend>
+
+                    <div class="row justify-content-center">
+                        <div id="Date_From_div" class="mb-3 col-md-6 text-start">
+                            <label class="form-label" for="transaction_date_from">Date de Départ</label>
+                            <input class="form-control" type="date" id="transaction_date_from">
+                        </div>
+                        <div id="Date_To_div" class="mb-3 col-md-6 text-start">
+                            <label class="form-label" for="transaction_date_to">Date de Fin</label>
+                            <input class="form-control" type="date" id="transaction_date_to">
+                        </div>
+                    </div>
+                </fieldset>
+            </div>
+        </div>
+
+        <div class="row justify-content-center">
+            <div class="table-responsive mt-3 col-md-10 p-0">
                 <table id="TransactionTable" class="table table-bordered text-center">
                     <colgroup>
-                        <col style="width: 30%;">
+                        <col style="width: 25%;">
+                        <col style="width: 15%;">
                         <col style="width: 20%;">
-                        <col style="width: 25%;">
-                        <col style="width: 25%;">
+                        <col style="width: 20%;">
+                        <col style="width: 20%;">
                     </colgroup>
                     <thead>
                         <tr>
                             <th scope = "col">Transaction</th>
                             <th scope = "col">Montant</th>
+                            <th scope = "col">Date</th>
                             <th scope = "col">Catégorie</th>
                             <th scope = "col">Actions</th>
                         </tr>

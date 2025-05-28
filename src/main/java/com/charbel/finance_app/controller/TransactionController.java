@@ -11,6 +11,7 @@ import com.charbel.finance_app.service.TransactionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.sql.Date;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -76,8 +77,10 @@ public class TransactionController {
     }
 
     @GetMapping("/per-month")
-    public List<TotalTransaction> getTransactionsByMonth() {
-        return transactionRepository.findTransactionsByMonth();
+    public List<TotalTransaction> getTransactionsByMonth(
+            @RequestParam(required = false) Date date_from,
+            @RequestParam(required = false) Date date_to) {
+        return transactionRepository.findTransactionsByMonth(date_from, date_to);
     }
     
     @GetMapping("/desc")

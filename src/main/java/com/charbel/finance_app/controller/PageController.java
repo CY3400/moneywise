@@ -10,4 +10,14 @@ public class PageController {
     public String showDescriptionPage() {
         return "forward:/Pages/description.html";
     }
+
+    @GetMapping("/Statistiques")
+    public String showStatisticPage() {
+        return "forward:/Pages/statistics.html";
+    }
+
+    @GetMapping("/Transactions")
+    public String showTransactionPage() {
+        return "forward:/Pages/transaction.html";
+    }
 }

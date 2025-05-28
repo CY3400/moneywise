@@ -1,7 +1,6 @@
 document.addEventListener("DOMContentLoaded", function() {
     const apiUrl = "http://localhost:8080/api/transaction";
 
-    const Stats_btn = document.getElementById("Stats_btn");
     const statTable = document.querySelector("#statTable tbody");
     var month_select = document.getElementById("month");
     var year_select = document.getElementById("year");
@@ -15,7 +14,13 @@ document.addEventListener("DOMContentLoaded", function() {
         return params.toString();
     }
 
-    Stats_btn.addEventListener("click", function () {
+    month_select.addEventListener("change", function () {
+        getTop5Transactions(month_select.value,year_select.value);
+        getMDD(month_select.value, year_select.value);
+        getMC(month_select.value, year_select.value);
+    });
+
+    year_select.addEventListener("change", function () {
         getTop5Transactions(month_select.value,year_select.value);
         getMDD(month_select.value, year_select.value);
         getMC(month_select.value, year_select.value);

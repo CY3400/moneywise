@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.sql.Date;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -16,8 +17,8 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
 
     List<Transaction> findByCategoryIdAndDateTransaction(int categoryId, LocalDate dateTransaction);
 
-    @Query(value="SELECT t.id, d.Description, amount, c.description as category FROM finance_db.Transaction t INNER JOIN finance_db.Description d on d.id = t.desc_id INNER JOIN finance_db.Category c on c.id = t.cat_id WHERE MONTH(t.date_transaction) = MONTH(CURRENT_DATE) AND YEAR(t.date_transaction) = YEAR(CURRENT_DATE)",nativeQuery = true)
-    List<TotalTransaction> findTransactionsByMonth();
+    @Query(value="SELECT t.id, d.Description, amount, c.description as category, t.date_transaction FROM finance_db.Transaction t INNER JOIN finance_db.Description d on d.id = t.desc_id INNER JOIN finance_db.Category c on c.id = t.cat_id WHERE DATE_FORMAT(t.date_transaction, '%m/%d/%Y') BETWEEN COALESCE(DATE_FORMAT(:date_from,'%m/%d/%Y'), DATE_FORMAT(SYSDATE(),'%m/%d/%Y')) AND COALESCE(DATE_FORMAT(:date_to,'%m/%d/%Y'), DATE_FORMAT(SYSDATE(),'%m/%d/%Y'))",nativeQuery = true)
+    List<TotalTransaction> findTransactionsByMonth(@Param("date_from") Date date_from, @Param("date_to") Date date_to);
 
     @Query(value = "Select * from finance_db.DESCRIPTION where type in (1,3) and status = 2 order by description", nativeQuery = true)
     List<Description> findTransactionDescriptions();

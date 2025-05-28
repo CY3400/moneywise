@@ -5,8 +5,21 @@ document.addEventListener("DOMContentLoaded", function() {
     
     const addButton = document.getElementById("transaction_btn");
     const TransactionTable = document.querySelector("#TransactionTable tbody");
+    const t_date_from = document.getElementById("transaction_date_from");
+    const t_date_to = document.getElementById("transaction_date_to");
 
-    function loadTransactions() {
+    function buildQueryParams(date_from, date_to){
+        const params = new URLSearchParams();
+        if(date_from) params.append("date_from", date_from);
+        if(date_to) params.append("date_to", date_to);
+        return params.toString();
+    }
+
+    let currentPage = 1;
+    const itemsPerPage = 5;
+    let allData = [];
+
+    function loadTransactions(date_from, date_to) {
         fetch(apiCat)
             .then(response => response.json())
             .then(data => {
@@ -44,31 +57,98 @@ document.addEventListener("DOMContentLoaded", function() {
                 })
             })
 
-        fetch(`${apiUrl}/per-month`)
+        fetch(`${apiUrl}/per-month?${buildQueryParams(date_from,date_to)}`)
             .then(response => response.json())
             .then(async (data) => {
-                TransactionTable.innerHTML = "";
-
-                data.forEach(transaction => {
-                    const row = document.createElement("tr");
-
-                    const buttons = `
-                        <button class="modify-btn btn bg-primary" data-id="${transaction.id}">Modifier</button>
-                        <button class="delete-btn btn bg-primary" data-id="${transaction.id}">Supprimer</button>
-                    `;
-
-                    row.innerHTML = `
-                        <td>${transaction.description}</td>
-                        <td>${transaction.amount} LBP</td>
-                        <td>${transaction.category}</td>
-                        <td>${buttons}</td>
-                    `;
-
-                    TransactionTable.appendChild(row);
-                });
+                allData = data;
+                renderPage();
             })
             .catch(error => console.error("Erreur lors du chargement des transactions:", error));
     }
+
+    function renderPage(){
+        TransactionTable.innerHTML = `<tr id="no-data-message"><td colspan="5" class="text-muted">Aucun résultat disponible</td></tr>`;
+
+        const startIndex = (currentPage - 1) * itemsPerPage;
+        const endIndex = startIndex + itemsPerPage;
+        const pageData = allData.slice(startIndex, endIndex);
+
+        pageData.forEach(transaction => {
+            const row = document.createElement("tr");
+
+            const buttons = `
+                <button class="modify-btn btn bg-primary" data-id="${transaction.id}">Modifier</button>
+                <button class="delete-btn btn bg-primary" data-id="${transaction.id}">Supprimer</button>`;
+
+            row.innerHTML = `
+                <td>${transaction.description}</td>
+                <td>${transaction.amount} LBP</td>
+                <td>${transaction.date}</td>
+                <td>${transaction.category}</td>
+                <td>${buttons}</td>
+            `;
+
+            TransactionTable.appendChild(row);
+        });
+
+        updatePagination();
+        toggleNoDataMessage();
+    }
+
+    function updatePagination() {
+        const totalPages = Math.ceil(allData.length / itemsPerPage);
+
+        document.getElementById("pageInfo").textContent =
+            `Page ${totalPages === 0 ? '0' : currentPage} sur ${totalPages}`;
+
+        const prevBtn = document.getElementById("prevPage");
+        const nextBtn = document.getElementById("nextPage");
+
+        if (totalPages === 0) {
+            prevBtn.disabled = true;
+            nextBtn.disabled = true;
+        } else {
+            prevBtn.disabled = currentPage === 1;
+            nextBtn.disabled = currentPage === totalPages;
+        }
+    }
+
+    function toggleNoDataMessage() {
+        const tableBody = document.querySelector('#TransactionTable tbody');
+        const noDataRow = document.getElementById('no-data-message');
+        const rows = tableBody.querySelectorAll('tr:not(#no-data-message)');
+
+        if (rows.length === 0) {
+            noDataRow.style.display = '';
+        } else {
+            noDataRow.style.display = 'none';
+        }
+    }
+
+    t_date_from.addEventListener('change', function(){
+        currentPage = 1;
+        loadTransactions(t_date_from.value, t_date_to.value);
+    })
+
+    t_date_to.addEventListener('change', function(){
+        currentPage = 1;
+        loadTransactions(t_date_from.value, t_date_to.value);
+    })
+
+    document.getElementById("prevPage").addEventListener("click", () => {
+        if (currentPage > 1) {
+            currentPage--;
+            renderPage();
+        }
+    });
+
+    document.getElementById("nextPage").addEventListener("click", () => {
+        const totalPages = Math.ceil(allData.length / itemsPerPage);
+        if (currentPage < totalPages) {
+            currentPage++;
+            renderPage();
+        }
+    });
 
     addButton.addEventListener("click", function () {
         const newTransaction = {

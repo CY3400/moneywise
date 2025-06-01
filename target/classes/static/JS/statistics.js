@@ -75,7 +75,7 @@ document.addEventListener("DOMContentLoaded", function() {
             }
             const data = await response.json();
 
-            statTable.innerHTML = "";
+            statTable.innerHTML = `<tr id="no-data-message"><td colspan="2" class="text-muted">Aucun résultat disponible</td></tr>`;
 
             data.forEach(d => {
                 const row = document.createElement("tr");
@@ -85,6 +85,16 @@ document.addEventListener("DOMContentLoaded", function() {
 
                 statTable.appendChild(row);
             });
+
+            const tableBody = document.querySelector('#statTable tbody');
+            const noDataRow = document.getElementById('no-data-message');
+            const rows = tableBody.querySelectorAll('tr:not(#no-data-message)');
+
+            if (rows.length === 0) {
+                noDataRow.style.display = '';
+            } else {
+                noDataRow.style.display = 'none';
+            }
         }
         catch(error){
             console.error(error);

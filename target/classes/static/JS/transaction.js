@@ -150,47 +150,105 @@ document.addEventListener("DOMContentLoaded", function() {
         }
     });
 
+    function checkNull (desc,amounts,dates,cats) {
+        var result = 1;
+
+        if (desc == '') {
+            desc_error.classList.remove("d-none");
+            Group_Description.classList.add('border','border-danger');
+            desc_label.classList.add('text-danger');
+            result = 0;
+        }
+        else {
+            desc_error.classList.add("d-none");
+            Group_Description.classList.remove('border','border-danger');
+            desc_label.classList.remove('text-danger');
+        }
+
+        if (amounts == '') {
+            amount_error.classList.remove("d-none");
+            amount.classList.add('border','border-danger');
+            amount_label.classList.add('text-danger');
+            result = 0;
+        }
+        else {
+            amount_error.classList.add("d-none");
+            amount.classList.remove('border','border-danger');
+            amount_label.classList.remove('text-danger');
+        }
+
+        if (dates == '') {
+            date_error.classList.remove("d-none");
+            transaction_date.classList.add('border','border-danger');
+            date_label.classList.add('text-danger');
+            result = 0;
+        }
+        else {
+            date_error.classList.add("d-none");
+            transaction_date.classList.remove('border','border-danger');
+            date_label.classList.remove('text-danger');
+        }
+
+        if (cats == '') {
+            cat_error.classList.remove("d-none");
+            cat.classList.add('border','border-danger');
+            cat_label.classList.add('text-danger');
+            result = 0;
+        }
+        else {
+            cat_error.classList.add("d-none");
+            cat.classList.remove('border','border-danger');
+            cat_label.classList.remove('text-danger');
+        }
+
+        return result;
+    }
+
     addButton.addEventListener("click", function () {
-        const newTransaction = {
-            descId: Group_Description.value,
-            amount: amount.value,
-            cat: cat.value,
-            dateTransaction: transaction_date.value
-        };
+        var notNull = checkNull(Group_Description.value,amount.value,transaction_date.value,cat.value);
 
-        console.log(newTransaction);
+        if(notNull == 1) {
+            const newTransaction = {
+                descId: Group_Description.value,
+                amount: amount.value,
+                cat: cat.value,
+                dateTransaction: transaction_date.value
+            };
 
-        if (!traid.value && Group_Description.value != '' && amount.value != '' && transaction_date.value != '' && cat.value != '') {
-            fetch(apiUrl, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(newTransaction)
-            })
-            .then(response => response.json())
-            .then(() => {
-                Group_Description.value = "";
-                amount.value = "";
-                transaction_date.value = "";
-                cat.value = "";
-                loadTransactions();
-            })
-            .catch(error => console.error("Erreur lors de l'ajout :", error));
-        } else if (traid.value && Group_Description.value != '' && amount.value != '' && transaction_date.value != '' && cat.value != '') {
-            fetch(`${apiUrl}/${traid.value}`, {
-                method: "PUT",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(newTransaction)
-            })
-            .then(response => response.json())
-            .then(() => {
-                Group_Description.value = "";
-                amount.value = "";
-                transaction_date.value = "";
-                traid.value = "";
-                cat.value = "";
-                loadTransactions();
-            })
-            .catch(error => console.error("Erreur lors de la mise à jour :", error));
+            console.log(newTransaction);
+
+            if (!traid.value && Group_Description.value != '' && amount.value != '' && transaction_date.value != '' && cat.value != '') {
+                fetch(apiUrl, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(newTransaction)
+                })
+                .then(response => response.json())
+                .then(() => {
+                    Group_Description.value = "";
+                    amount.value = "";
+                    transaction_date.value = "";
+                    cat.value = "";
+                    loadTransactions();
+                })
+                .catch(error => console.error("Erreur lors de l'ajout :", error));
+            } else if (traid.value && Group_Description.value != '' && amount.value != '' && transaction_date.value != '' && cat.value != '') {
+                fetch(`${apiUrl}/${traid.value}`, {
+                    method: "PUT",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(newTransaction)
+                })
+                .then(response => response.json())
+                .then(() => {
+                    Group_Description.value = "";
+                    amount.value = "";
+                    transaction_date.value = "";
+                    traid.value = "";
+                    cat.value = "";
+                    loadTransactions();
+                })
+                .catch(error => console.error("Erreur lors de la mise à jour :", error));
+            }
         }
     });
 

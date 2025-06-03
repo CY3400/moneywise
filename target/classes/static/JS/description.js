@@ -223,6 +223,7 @@ document.addEventListener("DOMContentLoaded", function(){
             result = 0;
         }
         else{
+            desc_error.classList.add("d-none");
             description.classList.remove('border','border-danger');
             desc_label.classList.remove('text-danger');
         }
@@ -233,6 +234,7 @@ document.addEventListener("DOMContentLoaded", function(){
             result = 0;
         }
         else{
+            type_error.classList.add("d-none");
             type_label.classList.remove('text-danger');
         }
 

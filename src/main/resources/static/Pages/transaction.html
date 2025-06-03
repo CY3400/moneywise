@@ -16,24 +16,28 @@
 
                     <div class="row justify-content-center">
                         <div id="Description_div" class="mb-3 col-md-3 text-start">
-                            <label class="form-label" for="Group_Description">Description</label>
+                            <label class="form-label" id="desc_label" for="Group_Description">Description</label>
                             <select class="form-control" name="Group_Description" id="Group_Description">
                                 <option></option>
                             </select>
+                            <span id="desc_error" role="alert" class="text-danger d-none">Un type est recquis !</span>
                         </div>
                         <div id="Amount_div" class="mb-3 col-md-3 text-start">
-                            <label class="form-label" for="amount">Montant</label>
+                            <label class="form-label" for="amount" id="amount_label">Montant</label>
                             <input class="form-control" type="text" id="amount">
+                            <span id="amount_error" role="alert" class="text-danger d-none">Un montant est recquis !</span>
                         </div>
                         <div id="Date_div" class="mb-3 col-md-3 text-start">
-                            <label class="form-label" for="transaction_date">Date</label>
+                            <label class="form-label" for="transaction_date" id="date_label">Date</label>
                             <input class="form-control" type="date" id="transaction_date">
+                            <span id="date_error" role="alert" class="text-danger d-none">Une date est recquise !</span>
                         </div>
                         <div id="Type_div" class="mb-3 col-md-3 text-start">
-                            <label class="form-label" for="cat">Catégorie</label>
+                            <label class="form-label" for="cat" id="cat_label">Catégorie</label>
                             <select class="form-control" name="cat" id="cat">
                                 <option></option>
                             </select>
+                            <span id="cat_error" role="alert" class="text-danger d-none">Une catégorie est recquise !</span>
                         </div>
                     </div>
                 </fieldset>

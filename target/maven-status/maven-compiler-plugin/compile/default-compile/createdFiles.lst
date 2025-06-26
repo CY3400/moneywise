@@ -3,7 +3,9 @@ com\charbel\finance_app\model\Subscription.class
 com\charbel\finance_app\model\Transaction.class
 com\charbel\finance_app\service\SubscriptionService.class
 com\charbel\finance_app\controller\TransactionController.class
+static\index.html
 com\charbel\finance_app\DTO\MostDepensiveDayDTO.class
+application.properties
 com\charbel\finance_app\DTO\MostCountDTO.class
 com\charbel\finance_app\repository\DescriptionRepository.class
 com\charbel\finance_app\controller\BudgetController.class

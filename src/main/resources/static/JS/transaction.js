@@ -1,7 +1,6 @@
 document.addEventListener("DOMContentLoaded", function() {
     const apiUrl = "http://localhost:8080/api/transaction";
     const apiCat = "http://localhost:8080/api/category";
-    const descUrl = "http://localhost:8080/api/description";
     
     const addButton = document.getElementById("transaction_btn");
     const TransactionTable = document.querySelector("#TransactionTable tbody");
@@ -66,33 +65,113 @@ document.addEventListener("DOMContentLoaded", function() {
             .catch(error => console.error("Erreur lors du chargement des transactions:", error));
     }
 
-    function renderPage(){
+    async function generateSelect(tId, tDescId) {
+        let select = `<select data-id="${tId}" data-original="${tDescId}" class="type-select">`;
+
+        const response = await fetch(`${apiUrl}/desc`);
+        const data = await response.json();
+
+        data.forEach(desc => {
+            const selected = desc.id === tDescId ? 'selected' : '';
+            select += `<option value="${desc.id}" ${selected}>${desc.description}</option>`;
+        });
+
+        select += `</select>`;
+        return select;
+    }
+
+    async function generateCat(tId, tCatId) {
+        let select = `<select data-id="${tId}" data-original="${tCatId}" class="type-select">`;
+
+        const response = await fetch(`${apiCat}`);
+        const data = await response.json();
+
+        data.forEach(desc => {
+            const selected = desc.id === tCatId ? 'selected' : '';
+            select += `<option value="${desc.id}" ${selected}>${desc.description}</option>`;
+        });
+
+        select += `</select>`;
+        return select;
+    }
+
+    async function renderPage(){
         TransactionTable.innerHTML = `<tr id="no-data-message"><td colspan="5" class="text-muted">Aucun résultat disponible</td></tr>`;
 
         const startIndex = (currentPage - 1) * itemsPerPage;
         const endIndex = startIndex + itemsPerPage;
         const pageData = allData.slice(startIndex, endIndex);
 
-        pageData.forEach(transaction => {
+        for(const transaction of pageData) {
             const row = document.createElement("tr");
+
+            const selectHtml = await generateSelect(transaction.id, transaction.descId);
+
+            const selectCat = await generateCat(transaction.id, transaction.catId);
 
             const buttons = `
                 <button class="modify-btn btn bg-primary" data-id="${transaction.id}">Modifier</button>
                 <button class="delete-btn btn bg-primary" data-id="${transaction.id}">Supprimer</button>`;
 
             row.innerHTML = `
-                <td>${transaction.description}</td>
-                <td>${transaction.amount} LBP</td>
-                <td>${transaction.date}</td>
-                <td>${transaction.category}</td>
+                <td>${selectHtml}</td>
+                <td contenteditable="true" spellcheck="false" data-id="${transaction.id}" data-original="${transaction.amount}" class="editable-amount">${transaction.amount}</td>
+                <td><input type="date" class="form-control transaction-date" data-id="${transaction.id}" value="${transaction.date}"></td>
+                <td>${selectCat}</td>
                 <td>${buttons}</td>
             `;
 
             TransactionTable.appendChild(row);
-        });
+        };
 
         updatePagination();
         toggleNoDataMessage();
+        attachAmountInputValidation();
+    }
+
+    function attachAmountInputValidation() {
+        document.querySelectorAll(".editable-amount").forEach(cell => {
+            cell.addEventListener("keydown", function(e) {
+                const allowedKeys = [
+                    "Backspace", "Delete", "ArrowLeft", "ArrowRight", "Tab", "Enter"
+                ];
+
+                if (allowedKeys.includes(e.key) || (e.key >= "0" && e.key <= "9") || (e.key === "." && !this.textContent.includes("."))) return;
+
+                e.preventDefault();
+            });
+
+            cell.addEventListener("input", function() {
+                let value = this.textContent;
+                let cleaned = "";
+                let hasDot = false;
+
+                for (let char of value) {
+                    if (char >= "0" && char <= "9") {
+                        cleaned += char;
+                    } else if (char === "." && !hasDot) {
+                        cleaned += ".";
+                        hasDot = true;
+                    }
+                }
+
+                this.textContent = cleaned;
+            });
+
+            cell.addEventListener("paste", function(e) {
+                e.preventDefault();
+                const text = (e.clipboardData || window.clipboardData).getData("text");
+                const sanitized = text.replace(/[^0-9.]/g, "");
+
+                const firstDot = sanitized.indexOf(".");
+                const withoutExtraDots = sanitized
+                    .split("")
+                    .filter((c, i) => c !== "." || i === firstDot)
+                    .join("");
+
+                document.execCommand("insertText", false, withoutExtraDots);
+            });
+        });
     }
 
     function updatePagination() {
@@ -214,8 +293,6 @@ document.addEventListener("DOMContentLoaded", function() {
                 cat: cat.value,
                 dateTransaction: transaction_date.value
             };
-
-            console.log(newTransaction);
 
             if (!traid.value && Group_Description.value != '' && amount.value != '' && transaction_date.value != '' && cat.value != '') {
                 fetch(apiUrl, {

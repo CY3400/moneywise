@@ -4,13 +4,17 @@ import java.sql.Date;
 
 public class TotalTransaction {
     private Long id;
+    private Long descId;
+    private Long catId;
     private String description;
     private Long amount;
     private String category;
     private Date dateTransaction;
 
-    public TotalTransaction(Long id, String description, Long amount, String category, Date dateTransaction){
+    public TotalTransaction(Long id, Long descId, Long catId, String description, Long amount, String category, Date dateTransaction){
         this.id = id;
+        this.descId = descId;
+        this.catId = catId;
         this.description = description;
         this.amount = amount;
         this.category = category;
@@ -23,6 +27,22 @@ public class TotalTransaction {
 
     public void setId(Long id){
         this.id = id;
+    }
+
+    public Long getDescId(){
+        return descId;
+    }
+
+    public void setDescId(Long descId){
+        this.descId = descId;
+    }
+
+    public Long getCatId(){
+        return catId;
+    }
+
+    public void setCatId(Long catId){
+        this.catId = catId;
     }
 
     public String getDescription(){

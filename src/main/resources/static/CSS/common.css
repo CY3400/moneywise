@@ -11772,7 +11772,7 @@ textarea.form-control-lg {
     border-radius: 50%;
 }
 
-.type-select {
+.type-select, .cat-select {
   appearance: none;
   border: none;
   background: transparent;
@@ -11782,7 +11782,7 @@ textarea.form-control-lg {
   text-align: center;
 }
 
-.type-select:focus-visible {
+.type-select:focus-visible, .cat-select:focus-visible {
   outline: 0;
 }
 

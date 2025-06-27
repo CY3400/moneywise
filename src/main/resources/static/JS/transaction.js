@@ -81,7 +81,7 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 
     async function generateCat(tId, tCatId) {
-        let select = `<select data-id="${tId}" data-original="${tCatId}" class="type-select">`;
+        let select = `<select data-id="${tId}" data-original="${tCatId}" class="cat-select">`;
 
         const response = await fetch(`${apiCat}`);
         const data = await response.json();
@@ -116,7 +116,7 @@ document.addEventListener("DOMContentLoaded", function() {
             row.innerHTML = `
                 <td>${selectHtml}</td>
                 <td contenteditable="true" spellcheck="false" data-id="${transaction.id}" data-original="${transaction.amount}" class="editable-amount">${transaction.amount}</td>
-                <td><input type="date" class="form-control transaction-date" data-id="${transaction.id}" value="${transaction.date}"></td>
+                <td><input type="date" class="form-control transaction-date" data-id="${transaction.id}" data-original="${transaction.date}" value="${transaction.date}"></td>
                 <td>${selectCat}</td>
                 <td>${buttons}</td>
             `;
@@ -294,59 +294,106 @@ document.addEventListener("DOMContentLoaded", function() {
                 dateTransaction: transaction_date.value
             };
 
-            if (!traid.value && Group_Description.value != '' && amount.value != '' && transaction_date.value != '' && cat.value != '') {
-                fetch(apiUrl, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(newTransaction)
-                })
-                .then(response => response.json())
-                .then(() => {
-                    Group_Description.value = "";
-                    amount.value = "";
-                    transaction_date.value = "";
-                    cat.value = "";
-                    loadTransactions();
-                })
-                .catch(error => console.error("Erreur lors de l'ajout :", error));
-            } else if (traid.value && Group_Description.value != '' && amount.value != '' && transaction_date.value != '' && cat.value != '') {
-                fetch(`${apiUrl}/${traid.value}`, {
-                    method: "PUT",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(newTransaction)
-                })
-                .then(response => response.json())
-                .then(() => {
-                    Group_Description.value = "";
-                    amount.value = "";
-                    transaction_date.value = "";
-                    traid.value = "";
-                    cat.value = "";
-                    loadTransactions();
-                })
-                .catch(error => console.error("Erreur lors de la mise à jour :", error));
+            fetch(apiUrl, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(newTransaction)
+            })
+            .then(response => response.json())
+            .then(() => {
+                Group_Description.value = "";
+                amount.value = "";
+                transaction_date.value = "";
+                cat.value = "";
+                loadTransactions(t_date_from, t_date_to);
+            })
+            .catch(error => console.error("Erreur lors de l'ajout :", error));
             }
+        });
+
+    function updateRowModificationStatus(row){
+        const amountCell = row.querySelector(".editable-amount");
+        const typeCell = row.querySelector(".type-select");
+        const typeTd = typeCell.closest("td");
+        const catCell = row.querySelector(".cat-select");
+        const catTd = catCell.closest("td");
+        const dateCell = row.querySelector(".transaction-date");
+        const dateTd = dateCell.closest("td");
+
+        const originalAmount = amountCell.dataset.original;
+        const currentAmount = amountCell.textContent;
+
+        const originalType = typeCell.dataset.original;
+        const currentType = typeCell.value;
+
+        const originalCat = catCell.dataset.original;
+        const currentCat = catCell.value;
+
+        const originalDate = dateCell.dataset.original;
+        const currentDate = dateCell.value;
+
+        const amountChanged = originalAmount != currentAmount;
+        const typeChanged = originalType != currentType;
+        const catChanged = originalCat != currentCat;
+        const dateChanged = originalDate != currentDate;
+
+        if(amountChanged || typeChanged || catChanged || dateChanged){
+            row.classList.add("modified-row");
         }
-    });
+        else{
+            row.classList.remove("modified-row");
+        }
+
+        amountCell.classList.toggle("modified-cell", amountChanged);
+        typeTd.classList.toggle("modified-cell", typeChanged);
+        catTd.classList.toggle("modified-cell", catChanged);
+        dateTd.classList.toggle("modified-cell", dateChanged);
+    }
 
     TransactionTable.addEventListener("click", function (event) {
         const transactionId = event.target.dataset.id;
 
         if (event.target.classList.contains("modify-btn")) {
-            fetch(`${apiUrl}/${transactionId}`)
+            descId = event.target.dataset.id;
+            const row = event.target.closest("tr");
+            const amountCell = row.querySelector(".editable-amount");
+            const newAmount = amountCell.textContent.trim();
+            const typeCell = row.querySelector(".type-select");
+            const newType = parseInt(typeCell.value);
+            const catCell = row.querySelector(".cat-select");
+            const newCat = parseInt(catCell.value);
+            const dateCell = row.querySelector(".transaction-date");
+            const newDate = dateCell.value;
+
+            if(newAmount === ""){
+                return;
+            }
+
+            amountCell.classList.remove("modified-cell");
+            typeCell.classList.remove("modified-cell");
+            catCell.classList.remove("modified-cell");
+            dateCell.classList.remove("modified-cell");
+            row.classList.remove("modified-row");
+
+            fetch(`${apiUrl}/${descId}`)
                 .then(response => response.json())
                 .then(existingData => {
-                    Group_Description.value = existingData.descId;
-                    amount.value = existingData.amount;
-                    cat.value = existingData.cat;
-                    traid.value = transactionId;
-                    const dateStr = existingData.dateTransaction;
-                if (Date.parse(dateStr)) {
-                    const dateObj = new Date(dateStr);
-                    transaction_date.value = dateObj.toISOString().split('T')[0];
-                } else {
-                    console.error("Invalid date format:", dateStr);
-                }
+                    const updatedData = {
+                        ...existingData,
+                        descId: newType,
+                        amount: newAmount,
+                        cat: newCat,
+                        date: newDate
+                    };
+                    
+                    return fetch(`${apiUrl}/${descId}`, {
+                        method: "PUT",
+                        headers: {"Content-Type": "application/json"},
+                        body: JSON.stringify(updatedData)
+                    })
+                })
+                .then(() => {
+                    loadTransactions(t_date_from, t_date_to);
                 })
                 .catch(error => console.error("Erreur lors de la récupération :", error));
         }
@@ -354,8 +401,20 @@ document.addEventListener("DOMContentLoaded", function() {
             fetch(`${apiUrl}/${transactionId}`,{
                 method: "DELETE",
             })
-            .then(() => loadTransactions())
+            .then(() => loadTransactions(t_date_from, t_date_to))
             .catch(error => console.error("Erreur lors de la suppression:", error));
+        }
+    });
+
+    TransactionTable.addEventListener("input", (event) => {
+        if(event.target.classList.contains("editable-amount")){
+            updateRowModificationStatus(event.target.closest("tr"));
+        }
+    });
+
+    TransactionTable.addEventListener("change", (event) => {
+        if(event.target.classList.contains("type-select") || event.target.classList.contains("cat-select") || event.target.classList.contains("transaction-date")){
+            updateRowModificationStatus(event.target.closest("tr"));
         }
     });
 

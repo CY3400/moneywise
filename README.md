@@ -9,7 +9,7 @@ Elle permet de suivre les dépenses, gérer des abonnements mensuels et consulte
 
 - 📅 Création et gestion d’abonnements mensuels (ex : Netflix, loyer…)
 - 💸 Suivi des dépenses ponctuelles avec filtrage par date
-- 📊 Statistiques des dépenses sous forme graphique
+- 📊 Statistiques des dépenses
 - 🔄 Création automatique des abonnements chaque mois
 - 📝 Modification et suppression dynamique des transactions
 
@@ -37,13 +37,7 @@ Elle permet de suivre les dépenses, gérer des abonnements mensuels et consulte
 
 ## 🎯 Objectif du projet
 
-Ce projet a été développé dans un but d’apprentissage, pour approfondir l’utilisation de Spring Boot, de l’architecture REST, de la manipulation de données en Java et du design frontend léger.
-
----
-
-## 📸 Aperçu
-
-*(Tu peux insérer ici une ou deux captures d’écran de l’application)*
+Ce projet a été développé dans les buts d'utilisation personnelle et d’apprentissage, pour approfondir l’utilisation de Spring Boot, de l’architecture REST, de la manipulation de données en Java et du design frontend léger.
 
 ---
 

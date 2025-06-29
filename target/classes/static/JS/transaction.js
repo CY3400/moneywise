@@ -306,8 +306,9 @@ document.addEventListener("DOMContentLoaded", function() {
                 transaction_date.value = "";
                 cat.value = "";
                 loadTransactions(t_date_from, t_date_to);
+                showToast('successToast');
             })
-            .catch(error => console.error("Erreur lors de l'ajout :", error));
+            .catch(showToast('errorToast'));
             }
         });
 
@@ -417,6 +418,12 @@ document.addEventListener("DOMContentLoaded", function() {
             updateRowModificationStatus(event.target.closest("tr"));
         }
     });
+
+    function showToast(toasting) {
+        const toastElement = document.getElementById(toasting);
+        const toast = new bootstrap.Toast(toastElement);
+        toast.show();
+    }
 
     loadTransactions();
 });

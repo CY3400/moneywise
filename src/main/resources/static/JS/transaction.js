@@ -305,7 +305,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 amount.value = "";
                 transaction_date.value = "";
                 cat.value = "";
-                loadTransactions(t_date_from, t_date_to);
+                loadTransactions(t_date_from.value, t_date_to.value);
                 showToast('successToast');
             })
             .catch(showToast('errorToast'));
@@ -394,7 +394,7 @@ document.addEventListener("DOMContentLoaded", function() {
                     })
                 })
                 .then(() => {
-                    loadTransactions(t_date_from, t_date_to);
+                    loadTransactions(t_date_from.value, t_date_to.value);
                 })
                 .catch(error => console.error("Erreur lors de la récupération :", error));
         }
@@ -402,7 +402,7 @@ document.addEventListener("DOMContentLoaded", function() {
             fetch(`${apiUrl}/${transactionId}`,{
                 method: "DELETE",
             })
-            .then(() => loadTransactions(t_date_from, t_date_to))
+            .then(() => loadTransactions(t_date_from.value, t_date_to.value))
             .catch(error => console.error("Erreur lors de la suppression:", error));
         }
     });

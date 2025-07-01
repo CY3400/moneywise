@@ -308,9 +308,9 @@ document.addEventListener("DOMContentLoaded", function() {
                 loadTransactions(t_date_from.value, t_date_to.value);
                 showToast('successToast');
             })
-            .catch(showToast('errorToast'));
-            }
-        });
+            .catch(() => showToast('errorToast'));
+        }
+    });
 
     function updateRowModificationStatus(row){
         const amountCell = row.querySelector(".editable-amount");

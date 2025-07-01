@@ -265,7 +265,7 @@ document.addEventListener("DOMContentLoaded", function(){
                 loadDescriptions();
                 showToast('successToast');
             })
-            .catch(showToast('errorToast'));
+            .catch(() => showToast('errorToast'));
         }
     });
 

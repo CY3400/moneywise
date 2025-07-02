@@ -3,57 +3,103 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Subscription</title>
+    <title>Abonnement</title>
     <link rel="stylesheet" href="../CSS/common.css">
 </head>
 <body>
     <div id="navbar-container"></div>
+    <main class="container mt-4" id="container">
+        <div class="row justify-content-center">
+            <div id="SubscriptionForm" class="border border-2 rounded p-4 col-md-9 text-center">
+                <fieldset>
+                    <legend class="fs-5 fw-bold text-primary">Abonnement</legend>
 
-    <div id="SubscriptionForm">
-        <h2>Subscription</h2>
-        <div id="Description_div">
-            <label for="Group_Description">Description</label>
-            <select name="Group_Description" id="Group_Description">
-                <option></option>
-            </select>
+                    <div class="row justify-content-center">
+                        <div id="Description_div" class="mb-3 col-md-3 text-start">
+                            <label class="form-label" id="desc_label" for="Group_Description">Description</label>
+                            <select class="form-control" name="Group_Description" id="Group_Description">
+                                <option></option>
+                            </select>
+                            <span id="desc_error" role="alert" class="text-danger d-none">Un type est recquis !</span>
+                        </div>
+                        <div id="Amount_div" class="mb-3 col-md-3 text-start">
+                            <label class="form-label" for="amount" id="amount_label">Montant</label>
+                            <input class="form-control" type="text" id="amount">
+                            <span id="amount_error" role="alert" class="text-danger d-none">Un montant est recquis !</span>
+                        </div>
+                        <div id="Date_div" class="mb-3 col-md-3 text-start">
+                            <label class="form-label" for="subscription_date" id="date_label">Date</label>
+                            <input class="form-control" type="date" id="subscription_date">
+                            <span id="date_error" role="alert" class="text-danger d-none">Une date est recquise !</span>
+                        </div>
+                        <div id="Repeat_div" class="mb-3 col-md-3 text-start">
+                            <label class="form-label" for="is_Repeat" id="cat_label">Répété</label>
+                            <select class="form-control" name="repeat" id="is_Repeat">
+                                <option value="0">Non</option>
+                                <option value="1">Oui</option>
+                            </select>
+                        </div>
+                    </div>
+                </fieldset>
+                <input type="hidden" id="subid">
+                <div id="Button_div" class="text-center">
+                    <button id="subscription_btn" class="btn bg-primary">Envoyer</button>
+                </div>
+            </div>
         </div>
-        <div id="Amount_div">
-            <label for="amount">Amount</label>
-            <input type="text" id="amount">
+
+        <div class="row justify-content-center">
+            <div class="table-responsive mt-3 col-md-9 p-0">
+                <table id="SubscriptionTable" class="table table-bordered text-center">
+                    <colgroup>
+                        <col style="width: 25%;">
+                        <col style="width: 15%;">
+                        <col style="width: 20%;">
+                        <col style="width: 20%;">
+                        <col style="width: 20%;">
+                    </colgroup>
+                    <thead>
+                        <tr>
+                            <th scope="col">Abonnement</th>
+                            <th scope="col">Montant (LBP)</th>
+                            <th scope="col">Payé</th>
+                            <th scope="col">Répété</th>
+                            <th scope="col">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        
+                    </tbody>
+                </table>
+            </div>
+            <div id="pagination" class="d-flex justify-content-center align-items-center gap-3 mt-3">
+                <button id="prevPage" class="btn bg-primary">Précédent</button>
+                <span id="pageInfo"></span>
+                <button id="nextPage" class="btn bg-primary">Suivant</button>
+            </div>
         </div>
-        <div id="Date_div">
-            <label for="subscription_date">Date</label>
-            <input type="date" id="subscription_date">
+    </main>
+    <div class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index: 11">
+        <div id="successToast" class="toast align-items-center text-bg-success border-0" role="alert" aria-live="assertive" aria-atomic="true" data-bs-autohide="true" data-bs-delay="3000">
+            <div class="d-flex">
+                <div class="toast-body" lang="fr">
+                    ✅ Abonnement enregistrée avec succès !
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Fermer"></button>
+            </div>
         </div>
-        <div id="Repeat_div">
-            <label for="is_Repeat">Repeat</label>
-            <select name="repeat" id="is_Repeat">
-                <option value="0">No</option>
-                <option value="1">Yes</option>
-            </select>
-        </div>
-        <input type="hidden" id="subid">
-        <div id="Button_div">
-            <button id="subscription_btn">Send</button>
+        <div id="errorToast" class="toast align-items-center text-bg-danger border-0" role="alert" aria-live="assertive" aria-atomic="true" data-bs-autohide="true" data-bs-delay="3000">
+            <div class="d-flex">
+                <div class="toast-body" lang="fr">
+                    ❌ Une erreur est survenue. Veuillez réessayer.
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Fermer"></button>
+            </div>
         </div>
     </div>
-
-    <table id="SubscriptionTable">
-        <thead>
-            <tr>
-                <th>Subscription</th>
-                <th>Amount</th>
-                <th>Paid</th>
-                <th>Repeat</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            
-        </tbody>
-    </table>
         
     <script src="../JS/navbar.js"></script>
     <script src="../JS/subscription.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" defer></script>
 </body>
 </html>

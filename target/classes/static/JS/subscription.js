@@ -5,6 +5,10 @@ document.addEventListener("DOMContentLoaded", function() {
     const addButton=document.getElementById("subscription_btn");
     const SubscriptionTable = document.querySelector("#SubscriptionTable tbody");
 
+    let currentPage = 1;
+    const itemsPerPage = 5;
+    let allData = [];
+
     addButton.addEventListener("click", function () {
         if (subid.value == '' && Group_Description.value != '' && amount.value != '' && subscription_date.value != '' && is_Repeat.value != ''){
             const newSubscription = {
@@ -68,7 +72,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
                 const defaultOption = document.createElement("option");
                 defaultOption.value = "";
-                defaultOption.textContent = "-- Select a Description --";
+                defaultOption.textContent = "-- Choisir une Description --";
                 Group_Description.appendChild(defaultOption);
 
                 data.forEach(desc => {
@@ -90,20 +94,20 @@ document.addEventListener("DOMContentLoaded", function() {
                     var rep;
 
                     if(subscription.paid == 0){
-                        paid = `<button class="paid-btn" data-id="${subscription.id}">Pay</button>`;
-                        buttons = `<button class="modify-btn" data-id="${subscription.id}">Modify</button>
-                                <button class="delete-btn" data-id="${subscription.id}">Delete</button>`
+                        paid = `<button class="paid-btn btn bg-primary" data-id="${subscription.id}">Payer</button>`;
+                        buttons = `<button class="modify-btn btn bg-primary" data-id="${subscription.id}">Modifier</button>
+                                <button class="delete-btn btn bg-primary" data-id="${subscription.id}">Supprimer</button>`
                     }
                     else{
-                        paid = 'Paid';
+                        paid = 'Payé';
                         buttons = "";
                     }
 
                     if(subscription.repeat == 1){
-                        rep = 'Yes';
+                        rep = 'Oui';
                     }
                     else{
-                        rep= 'No';
+                        rep= 'Non';
                     }
                     row.innerHTML = `
                         <td>${subscription.description}</td>

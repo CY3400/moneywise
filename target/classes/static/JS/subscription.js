@@ -10,7 +10,9 @@ document.addEventListener("DOMContentLoaded", function() {
     let allData = [];
 
     addButton.addEventListener("click", function () {
-        if (subid.value == '' && Group_Description.value != '' && amount.value != '' && subscription_date.value != '' && is_Repeat.value != ''){
+        var notNull = checkNull(Group_Description.value,amount.value,subscription_date.value);
+
+        if (notNull == 1){
             const newSubscription = {
                 descId: Group_Description.value,
                 amount: amount.value,
@@ -34,7 +36,7 @@ document.addEventListener("DOMContentLoaded", function() {
             })
             .catch(error => console.error("Erreur lors de l'ajout :", error));
         }
-        else if (subid.value != '' && Group_Description.value != '' && amount.value != '' && subscription_date.value != '' && is_Repeat.value != ''){
+        /*else if (subid.value != '' && Group_Description.value != '' && amount.value != '' && subscription_date.value != '' && is_Repeat.value != ''){
             fetch(`${apiUrl}/${subid.value}`)
                 .then(response => response.json())
                 .then(newData => {
@@ -61,7 +63,7 @@ document.addEventListener("DOMContentLoaded", function() {
                     is_Repeat.value = "";
                 })
                 .catch(error => console.error("Erreur lors de la mise à jour :", error));
-        }
+        }*/
     });
 
     function loadSubscriptions() {
@@ -181,14 +183,54 @@ document.addEventListener("DOMContentLoaded", function() {
             currentPage --;
             renderPage();
         }
-    })
+    });
 
     document.getElementById("nextPage").addEventListener("click", () => {
         if(currentPage < totalPages) {
             currentPage ++;
             renderPage();
         }
-    })
+    });
+
+    function checkNull (desc, amounts, dates) {
+        var result = 1;
+
+        if (desc == '') {
+            desc_error.classList.remove("d-none");
+            Group_Description.classList.add('border','border-danger');
+            desc_label.classList.add('text-danger');
+            result = 0;
+        }
+        else {
+            desc_error.classList.add("d-none");
+            Group_Description.classList.remove('border','border-danger');
+            desc_label.classList.remove('text-danger');
+        }
+
+        if (amounts == '') {
+            amount_error.classList.remove("d-none");
+            amount.classList.add('border','border-danger');
+            amount_label.classList.add('text-danger');
+            result = 0;
+        }
+        else {
+            amount_error.classList.add("d-none");
+            amount.classList.remove('border','border-danger');
+            amount_label.classList.remove('text-danger');
+        }
+
+        if (dates == '') {
+            date_error.classList.remove("d-none");
+            subscription_date.classList.add('border','border-danger');
+            date_label.classList.add('text-danger');
+            result = 0;
+        }
+        else {
+            date_error.classList.add("d-none");
+            subscription_date.classList.remove('border','border-danger');
+            date_label.classList.remove('text-danger');
+        }
+    }
 
     SubscriptionTable.addEventListener("click", function (event) {
         if (event.target.classList.contains("paid-btn")) {

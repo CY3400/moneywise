@@ -85,41 +85,83 @@ document.addEventListener("DOMContentLoaded", function() {
             
         fetch(`${apiUrl}/per-month`)
             .then(response => response.json())
-            .then(data => {
-                SubscriptionTable.innerHTML = "";
-                data.forEach(subscription => {
-                    const row = document.createElement("tr");
-                    var paid;
-                    var buttons;
-                    var rep;
-
-                    if(subscription.paid == 0){
-                        paid = `<button class="paid-btn btn bg-primary" data-id="${subscription.id}">Payer</button>`;
-                        buttons = `<button class="modify-btn btn bg-primary" data-id="${subscription.id}">Modifier</button>
-                                <button class="delete-btn btn bg-primary" data-id="${subscription.id}">Supprimer</button>`
-                    }
-                    else{
-                        paid = 'Payé';
-                        buttons = "";
-                    }
-
-                    if(subscription.repeat == 1){
-                        rep = 'Oui';
-                    }
-                    else{
-                        rep= 'Non';
-                    }
-                    row.innerHTML = `
-                        <td>${subscription.description}</td>
-                        <td>${subscription.amount} LBP</td>
-                        <td>${paid}</td>
-                        <td>${rep}</td>
-                        <td>${buttons}</td>
-                    `;
-                    SubscriptionTable.appendChild(row);
-                });
+            .then(async (data) => {
+                allData = data;
+                renderPage();
             })
         .catch(error => console.error("Erreur lors du chargement des transactions:", error));
+    }
+
+    async function renderPage(){
+        SubscriptionTable.innerHTML = `<tr id="no-data-message"><td colspan="5" class="text-muted">Aucun résultat disponible</td></tr>`;
+
+        const startIndex = (currentPage - 1) * itemsPerPage;
+        const endIndex = startIndex + itemsPerPage;
+        const pageData = allData.slice(startIndex, endIndex);
+
+        for (const subscription of pageData) {
+            const row = document.createElement("tr");
+            var paid;
+            var buttons;
+            var rep;
+
+            if(subscription.paid == 0){
+                paid = `<button class="paid-btn btn bg-primary" data-id="${subscription.id}">Payer</button>`;
+                buttons = `<button class="modify-btn btn bg-primary" data-id="${subscription.id}">Modifier</button>
+                        <button class="delete-btn btn bg-primary" data-id="${subscription.id}">Supprimer</button>`
+            }
+            else{
+                paid = 'Payé';
+                buttons = "";
+            }
+
+            if(subscription.repeat == 1){
+                rep = 'Oui';
+            }
+            else{
+                rep= 'Non';
+            }
+            row.innerHTML = `
+                <td>${subscription.description}</td>
+                <td>${subscription.amount} LBP</td>
+                <td>${paid}</td>
+                <td>${rep}</td>
+                <td>${buttons}</td>
+            `;
+            SubscriptionTable.appendChild(row);
+        };
+
+        updatePagination();
+        toggleNoDataMessage();
+    }
+
+    function updatePagination() {
+        const totalPages = Math.ceil(allData.length / itemsPerPage);
+
+        document.getElementById("pageInfo").textContent = `Page ${totalPages === 0 ? '0' : currentPage} sur ${totalPages}`;
+
+        const prevBtn = document.getElementById("prevPage");
+        const nextBtn = document.getElementById("nextPage");
+
+        if (totalPages === 0) {
+            prevBtn.disabled = true;
+            nextBtn.disabled = true;
+        } else {
+            prevBtn.disabled = currentPage === 1;
+            nextBtn.disabled = currentPage === totalPages;
+        }
+    }
+
+    function toggleNoDataMessage() {
+        const tableBody = document.querySelector("#SubscriptionTable tbody");
+        const noDataRow = document.getElementById('no-data-message');
+        const rows = tableBody.querySelectorAll('tr:not(#no-data-message)');
+
+        if (rows.length === 0) {
+            noDataRow.style.display = '';
+        } else {
+            noDataRow.style.display = 'none';
+        }
     }
 
     SubscriptionTable.addEventListener("click", function (event) {
@@ -133,6 +175,20 @@ document.addEventListener("DOMContentLoaded", function() {
                 .catch(error => console.error("Erreur lors de la suppression:", error));
         }
     });
+
+    document.getElementById("prevPage").addEventListener("click", () => {
+        if(currentPage > 1) {
+            currentPage --;
+            renderPage();
+        }
+    })
+
+    document.getElementById("nextPage").addEventListener("click", () => {
+        if(currentPage < totalPages) {
+            currentPage ++;
+            renderPage();
+        }
+    })
 
     SubscriptionTable.addEventListener("click", function (event) {
         if (event.target.classList.contains("paid-btn")) {

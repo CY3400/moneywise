@@ -9,6 +9,28 @@ document.addEventListener("DOMContentLoaded", function() {
     const itemsPerPage = 5;
     let allData = [];
 
+    amount.addEventListener("keydown", function (e) {
+        const allowedKeys = [
+            "Backspace", "Delete", "ArrowLeft", "ArrowRight", "Tab", "Enter"
+        ];
+        const isNumber = e.key >= "0" && e.key <= "9";
+        const isDot = e.key === "." && !this.value.includes(".");
+        
+        if (!allowedKeys.includes(e.key) && !isNumber && !isDot) {
+            e.preventDefault();
+        }
+    });
+
+    amount.addEventListener("input", function () {
+        let cleaned = this.value.replace(/[^0-9.]/g, "");
+
+        const parts = cleaned.split(".");
+        if (parts.length > 2) {
+            cleaned = parts[0] + "." + parts.slice(1).join("");
+        }
+        this.value = cleaned;
+    });
+
     addButton.addEventListener("click", function () {
         var notNull = checkNull(Group_Description.value,amount.value,subscription_date.value);
 

@@ -55,37 +55,10 @@ document.addEventListener("DOMContentLoaded", function() {
                 amount.value = "";
                 subscription_date.value = "";
                 is_Repeat.value = "";
+                showToast('successToast');
             })
-            .catch(error => console.error("Erreur lors de l'ajout :", error));
+            .catch(() => showToast('errorToast'));
         }
-        /*else if (subid.value != '' && Group_Description.value != '' && amount.value != '' && subscription_date.value != '' && is_Repeat.value != ''){
-            fetch(`${apiUrl}/${subid.value}`)
-                .then(response => response.json())
-                .then(newData => {
-                    const updatedSubscription = {
-                        descId: Group_Description.value,
-                        amount: amount.value,
-                        paid: 0,
-                        date_finance: subscription_date.value,
-                        repeat: is_Repeat.value
-                    };
-                    return fetch(`${apiUrl}/${subid.value}`, {
-                        method: "PUT",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify(updatedSubscription)
-                    });
-                })
-                .then(response => response.json())
-                .then(() => loadSubscriptions())
-                .then(() => {
-                    Group_Description.value = "";
-                    amount.value = "";
-                    subscription_date.value = "";
-                    subid.value = "";
-                    is_Repeat.value = "";
-                })
-                .catch(error => console.error("Erreur lors de la mise à jour :", error));
-        }*/
     });
 
     function loadSubscriptions() {
@@ -116,8 +89,23 @@ document.addEventListener("DOMContentLoaded", function() {
         .catch(error => console.error("Erreur lors du chargement des transactions:", error));
     }
 
+    async function generateSelect(tId, tDescId) {
+        let select = `<select data-id="${tId}" data-original=${tDescId} class="type-select">`;
+
+        const response = await fetch(`${apiUrl}/desc`);
+        const data = await response.json();
+
+        data.forEach(desc => {
+            const selected = desc.id === tDescId ? 'selected' : '';
+            select += `<option value="${desc.id}" ${selected}>${desc.description}</option>`;
+        });
+
+        select += `</select>`;
+        return select;
+    }
+
     async function renderPage(){
-        SubscriptionTable.innerHTML = `<tr id="no-data-message"><td colspan="5" class="text-muted">Aucun résultat disponible</td></tr>`;
+        SubscriptionTable.innerHTML = `<tr id="no-data-message"><td colspan="6" class="text-muted">Aucun résultat disponible</td></tr>`;
 
         const startIndex = (currentPage - 1) * itemsPerPage;
         const endIndex = startIndex + itemsPerPage;
@@ -128,28 +116,38 @@ document.addEventListener("DOMContentLoaded", function() {
             var paid;
             var buttons;
             var rep;
+            var rep2;
+
+            const selectHTML = await generateSelect(subscription.id,subscription.descId);
 
             if(subscription.paid == 0){
                 paid = `<button class="paid-btn btn bg-primary" data-id="${subscription.id}">Payer</button>`;
-                buttons = `<button class="modify-btn btn bg-primary" data-id="${subscription.id}">Modifier</button>
+                buttons = `<button class="modify-btn btn bg-primary" data-id="${subscription.id}" data-value="1">Modifier</button>
                         <button class="delete-btn btn bg-primary" data-id="${subscription.id}">Supprimer</button>`
             }
             else{
                 paid = 'Payé';
-                buttons = "";
+                buttons = `<button class="modify-btn btn bg-primary" data-id="${subscription.id}" data-value="2">Modifier</button>`;
             }
 
+            rep = `<select data-id="${subscription.id}" data-original=${subscription.repeat} class="repeat-select">
+                <option value="1" ${subscription.repeat === 1 ? 'selected' : ''}>Oui</option>
+                <option value="0" ${subscription.repeat === 0 ? 'selected' : ''}>Non</option>
+            </select>`;
+
             if(subscription.repeat == 1){
-                rep = 'Oui';
+                rep2 = 'Oui';
             }
             else{
-                rep= 'Non';
+                rep2 = 'Non';
             }
+
             row.innerHTML = `
-                <td>${subscription.description}</td>
-                <td>${subscription.amount} LBP</td>
+                <td>${subscription.paid === 0 ? selectHTML : subscription.description}</td>
+                <td contenteditable="${subscription.paid === 0 ? true : false}" spellcheck="false" data-id="${subscription.id}" data-original="${subscription.amount}" class="editable-amount">${subscription.amount}</td>
                 <td>${paid}</td>
-                <td>${rep}</td>
+                <td>${subscription.paid === 1 ? `<input type="date" class="form-control subscription-date" data-id="${subscription.id}" data-original="${subscription.datePaid}" value="${subscription.datePaid}">` : ''}</td>
+                <td>${subscription.paid === 0 ? rep : rep2}</td>
                 <td>${buttons}</td>
             `;
             SubscriptionTable.appendChild(row);
@@ -157,6 +155,38 @@ document.addEventListener("DOMContentLoaded", function() {
 
         updatePagination();
         toggleNoDataMessage();
+        attachAmountImputValidation();
+    }
+
+    function attachAmountImputValidation() {
+        document.querySelectorAll(".editable-amount").forEach(cell => {
+            cell.addEventListener("keydown", function(e) {
+                const allowedKeys = [
+                    "Backspace", "Delete", "ArrowLeft", "ArrowRight", "Tab", "Enter"
+                ];
+
+                if (allowedKeys.includes(e.key) || (e.key >= "0" && e.key <= "9") || (e.key === "." && !this.textContent.includes("."))) return;
+
+                e.preventDefault();
+            });
+
+            cell.addEventListener("input", function() {
+                let value = this.textContent;
+                let cleaned = "";
+                let hasDot = false;
+
+                for (let char of value) {
+                    if (char >= "0" && char <= "9") {
+                        cleaned += char;
+                    } else if (char === "." && !hasDot) {
+                        cleaned += ".";
+                        hasDot = true;
+                    }
+                }
+
+                this.textContent = cleaned;
+            });
+        })
     }
 
     function updatePagination() {
@@ -252,6 +282,56 @@ document.addEventListener("DOMContentLoaded", function() {
             subscription_date.classList.remove('border','border-danger');
             date_label.classList.remove('text-danger');
         }
+
+        return result;
+    }
+
+    function updateRowModificationStatus(row){
+        const amountCell = row.querySelector(".editable-amount");
+        const typeCell = row.querySelector(".type-select");
+        const typeTd = typeCell !== null ? typeCell.closest("td") : null;
+        const repeatCell = row.querySelector(".repeat-select");
+        const repeatTd = repeatCell !== null ? repeatCell.closest("td") : null;
+        const dateCell = row.querySelector(".subscription-date");
+        const dateTd = dateCell !== null ? dateCell.closest("td") : null;
+
+        const originalAmount = amountCell.dataset.original;
+        const currentAmount = amountCell.textContent;
+
+        const originalType = typeCell !== null ? typeCell.dataset.original : null;
+        const currentType = typeCell !== null ? typeCell.value : null;
+
+        const originalRepeat = repeatCell !== null ? repeatCell.dataset.original : null;
+        const currentRepeat = repeatCell !== null ? repeatCell.value : null;
+
+        const originalDate = dateCell !== null ? dateCell.dataset.original : null;
+        const currentDate = dateCell !== null ? dateCell.value : null;
+
+        const amountChanged = originalAmount != currentAmount;
+        const typeChanged = originalType != currentType;
+        const repeatChanged = originalRepeat != currentRepeat;
+        const dateChanged = originalDate != currentDate;
+
+        if(amountChanged || typeChanged || repeatChanged || dateChanged){
+            row.classList.add("modified-row");
+        }
+        else{
+            row.classList.remove("modified-row");
+        }
+
+        amountCell.classList.toggle("modified-cell", amountChanged);
+
+        if (typeTd !== null) {
+            typeTd.classList.toggle("modified-cell", typeChanged);
+        }
+
+        if (repeatTd !== null) {
+            repeatTd.classList.toggle("modified-cell", repeatChanged);
+        }
+
+        if (dateTd !== null) {
+            dateTd.classList.toggle("modified-cell", dateChanged);
+        }
     }
 
     SubscriptionTable.addEventListener("click", function (event) {
@@ -282,20 +362,100 @@ document.addEventListener("DOMContentLoaded", function() {
     SubscriptionTable.addEventListener("click", function (event) {
         const subscriptionId = event.target.dataset.id;
 
+        const value = event.target.dataset.value;
+
         if (event.target.classList.contains("modify-btn")) {
-            fetch(`${apiUrl}/${subscriptionId}`)
+            const row = event.target.closest("tr");
+
+            var amountCell, newAmount, typeCell, newType, repeatCell, newRepeat, dateCell, newDate;
+
+            if (value == 1) {
+                amountCell = row.querySelector(".editable-amount");
+                newAmount = amountCell.textContent.trim();
+                typeCell = row.querySelector(".type-select");
+                newType = parseInt(typeCell.value);
+                repeatCell = row.querySelector(".repeat-select");
+                newRepeat = parseInt(repeatCell.value);
+            }
+            else {
+                dateCell = row.querySelector(".subscription-date");
+                newDate = dateCell.value;
+            }
+
+            if((newAmount == "" && value == 1) || (newDate == "" && value == 2)){
+                return;
+            }
+
+            if (value == 1) {
+                amountCell.classList.remove("modified-cell");
+                typeCell.classList.remove("modified-cell");
+                repeatCell.classList.remove("modified-cell");
+
+                fetch(`${apiUrl}/${subscriptionId}`)
                 .then(response => response.json())
                 .then(existingData => {
-                    Group_Description.value = existingData.descId;
-                    amount.value = existingData.amount;
-                    const dateObj = new Date(existingData.date_finance);
-                    subscription_date.value = dateObj.toISOString().split('T')[0];
-                    subid.value = subscriptionId;
-                    is_Repeat.value = existingData.repeat;
+                    const updatedData = {
+                        ...existingData,
+                        descId: newType,
+                        amount: newAmount,
+                        repeat: newRepeat
+                    };
+
+                    return fetch(`${apiUrl}/${subscriptionId}`, {
+                        method: "PUT",
+                        headers: {"Content-Type": "application/json"},
+                        body: JSON.stringify(updatedData)
+                    })
+                })
+                .then(() => {
+                    loadSubscriptions();
                 })
                 .catch(error => console.error("Erreur lors de la récupération :", error));
+            }
+            else {
+                dateCell.classList.remove("modified-cell");
+
+                fetch(`${apiUrl}/${subscriptionId}`)
+                .then(response => response.json())
+                .then(existingData => {
+                    const updatedData = {
+                        ...existingData,
+                        paidDate: newDate
+                    };
+
+                    return fetch(`${apiUrl}/${subscriptionId}`, {
+                        method: "PUT",
+                        headers: {"Content-Type": "application/json"},
+                        body: JSON.stringify(updatedData)
+                    })
+                })
+                .then(() => {
+                    loadSubscriptions();
+                })
+                .catch(error => console.error("Erreur lors de la récupération :", error));
+            }
+        
+            row.classList.remove("modified-row");
         }
     });
+
+    SubscriptionTable.addEventListener("input", (event) => {
+        if(event.target.classList.contains("editable-amount")){
+            updateRowModificationStatus(event.target.closest("tr"));
+        }
+    });
+
+    SubscriptionTable.addEventListener("change", (event) => {
+        if(event.target.classList.contains("type-select") || event.target.classList.contains("repeat-select") || event.target.classList.contains("subscription-date")){
+            updateRowModificationStatus(event.target.closest("tr"));
+        }
+    });
+
+    function showToast(toasting) {
+        const toastElement = document.getElementById(toasting);
+        const toast = new bootstrap.Toast(toastElement);
+        toast.show();
+    }
 
     loadSubscriptions();
 });

@@ -62,7 +62,7 @@ document.addEventListener("DOMContentLoaded", function() {
     });
 
     function loadSubscriptions() {
-        fetch(`${apiUrl}/desc`)
+        fetch(`${apiUrl}/SLdesc`)
             .then(response => response.json())
             .then(data =>{
                 Group_Description.innerHTML = "";

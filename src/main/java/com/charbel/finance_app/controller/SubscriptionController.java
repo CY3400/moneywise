@@ -70,4 +70,9 @@ public class SubscriptionController {
     public List<Description> findSubscriptionsByDescription() {
         return subscriptionRepository.findSubscriptionsByDescription();
     }
+
+    @GetMapping("/SLdesc")
+    public List<Description> findSelectListDescriptions() {
+        return subscriptionRepository.findSelectListDescriptions();
+    }
 }

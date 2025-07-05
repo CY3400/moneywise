@@ -28,6 +28,9 @@ public interface SubscriptionRepository extends JpaRepository<Subscription, Long
     @Query(value = "SELECT * FROM FINANCE_DB.DESCRIPTION WHERE type in (2,3) and status = 2 order by description", nativeQuery = true)
     List<Description> findSubscriptionsByDescription();
 
+    @Query(value = "SELECT * FROM FINANCE_DB.DESCRIPTION WHERE type in (2,3) and status = 2 and id not in (select desc_Id from finance_db.subscription where month(date_finance) = month(current_date()) and year(date_finance) = year(current_date())) order by description", nativeQuery = true)
+    List<Description> findSelectListDescriptions();
+
     @Query(value = "Select count(*) from finance_db.subscription where date_finance = :date", nativeQuery = true)
     Long existsByDate(LocalDate date);
 }

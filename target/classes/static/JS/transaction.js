@@ -179,20 +179,6 @@ document.addEventListener("DOMContentLoaded", function() {
 
                 this.textContent = cleaned;
             });
-
-            cell.addEventListener("paste", function(e) {
-                e.preventDefault();
-                const text = (e.clipboardData || window.clipboardData).getData("text");
-                const sanitized = text.replace(/[^0-9.]/g, "");
-
-                const firstDot = sanitized.indexOf(".");
-                const withoutExtraDots = sanitized
-                    .split("")
-                    .filter((c, i) => c !== "." || i === firstDot)
-                    .join("");
-
-                document.execCommand("insertText", false, withoutExtraDots);
-            });
         });
     }
 

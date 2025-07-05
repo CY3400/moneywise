@@ -48,7 +48,7 @@ public class Subscription {
     public void setDate(LocalDate date) { this.date_finance = date; }
 
     public LocalDate getPaidDate() { return date_paid; }
-    public void setPaidDate(LocalDate date) { this.date_paid = date; }
+    public void setPaidDate(LocalDate datePaid) { this.date_paid = datePaid; }
 
     public int getRepeat() { return isRepeat; }
     public void setRepeat(int repeat) { this.isRepeat = repeat; }

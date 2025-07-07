@@ -41,7 +41,7 @@ document.addEventListener("DOMContentLoaded", function() {
     });
 
     function loadTransactions(date_from, date_to) {
-        fetch(apiCat)
+        fetch(`${apiCat}/active`)
             .then(response => response.json())
             .then(data => {
                 cat.innerHTML = "";

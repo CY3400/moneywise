@@ -27,4 +27,8 @@ public class PageController {
         return "forward:/Pages/subscription.html";
     }
     
+    @GetMapping("/Catégories")
+    public String showCategoryPage() {
+        return "forward:/Pages/category.html";
+    }
 }

@@ -12,6 +12,8 @@ public class Category {
 
     private String description;
 
+    private int status;
+
     public Category() {}
 
     public Category(String description) {
@@ -23,4 +25,7 @@ public class Category {
 
     public String getDescription() { return description; }
     public void setDescription(String description) { this.description = description; }
+
+    public int getStatus() { return status; }
+    public void setStatus(int status) { this.status = status; }
 }

@@ -3,37 +3,78 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Category</title>
+    <title>Catégories</title>
     <link rel="stylesheet" href="../CSS/common.css">
 </head>
 <body>
     <div id="navbar-container"></div>
+    <main class="container mt-4" id="container">
+        <div class="row justify-content-center">
+            <div id="CategoryForm" class="border border-2 rounded p-4 col-md-6 text-center">
+                <fieldset>
+                    <legend class="fs-5 fw-bold text-primary">Catégories</legend>
 
-    <div id="CategoryForm">
-        <h2>Categories</h2>
-        <div id="Category_div">
-            <label for="description">Description</label>
-            <input type="text" id="description">
+                    <div class="row justify-content-center">
+                        <div id="Category_div" class="mb-3 col-md-8 text-start">
+                            <label id="desc_label" for="description" class="form-label">Nom</label>
+                            <input type="text" id="description" class="form-control">
+                            <span id="desc_error" role="alert" class="text-danger d-none">Un nom est requis !</span>
+                        </div>
+                    </div>
+                </fieldset>
+                <input type="hidden" id="catid">
+                <div id="Button_div" class="text-center">
+                    <button id="category_btn" class="btn bg-primary">Envoyer</button>
+                </div>
+            </div>
         </div>
-        <input type="hidden" id="catid">
-        <div id="Button_div">
-            <button id="category_btn">Send</button>
+
+        <div class="row justify-content-center">
+            <div class="table-responsive mt-3 col-md-6 p-0">
+                <table class="table table-bordered text-center" id="CategoryTable">
+                    <colgroup>
+                        <col style="width: 65%;">
+                        <col style="width: 35%;">
+                    </colgroup>
+                    <thead>
+                        <tr>
+                            <th scope="col">Catégorie</th>
+                            <th scope="col">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        
+                    </tbody>
+                </table>
+            </div>
+            <div id="pagination" class="d-flex justify-content-center align-items-center gap-3 mt-3">
+                <button id="prevPage" class="btn bg-primary">Précédent</button>
+                <span id="pageInfo"></span>
+                <button id="nextPage" class="btn bg-primary">Suivant</button>
+            </div>
+        </div>
+    </main>
+    <div class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index: 11">
+        <div id="successToast" class="toast align-items-center text-bg-success border-0" role="alert" aria-live="assertive" aria-atomic="true" data-bs-autohide="true" data-bs-delay="3000">
+            <div class="d-flex">
+                <div class="toast-body" lang="fr">
+                    ✅ Catégorie enregistrée avec succès !
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Fermer"></button>
+            </div>
+        </div>
+        <div id="errorToast" class="toast align-items-center text-bg-danger border-0" role="alert" aria-live="assertive" aria-atomic="true" data-bs-autohide="true" data-bs-delay="3000">
+            <div class="d-flex">
+                <div class="toast-body" lang="fr">
+                    ❌ Une erreur est survenue. Veuillez réessayer.
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Fermer"></button>
+            </div>
         </div>
     </div>
-
-    <table id="CategoryTable">
-        <thead>
-            <tr>
-                <th>Category</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            
-        </tbody>
-    </table>
         
     <script src="../JS/navbar.js"></script>
     <script src="../JS/category.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" defer></script>
 </body>
 </html>

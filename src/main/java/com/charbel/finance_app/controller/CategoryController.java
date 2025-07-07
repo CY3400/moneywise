@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+
 @RestController
 @RequestMapping("/api/category")
 public class CategoryController {
@@ -24,6 +25,12 @@ public class CategoryController {
         return categoryRepository.findAll();
     }
 
+    @GetMapping("/active")
+    public List<Category> findAllActives() {
+        return categoryRepository.findAllActives();
+    }
+    
+
     @GetMapping("/{id}")
     public Category getCategoryById(@PathVariable Long id) {
         return categoryRepository.findById(id).orElse(null);
@@ -35,6 +42,7 @@ public class CategoryController {
             .orElseThrow(() -> new RuntimeException("Category not found with id " + id));
 
     category.setDescription(categoryDetails.getDescription());
+    category.setStatus(categoryDetails.getStatus());
 
     return categoryRepository.save(category);
     }
@@ -47,5 +55,9 @@ public class CategoryController {
         return "Category with ID " + id + " deleted successfully.";
     }
 
-
+    @GetMapping("/filter")
+    public List<Category> findDescriptionByNameOrType(
+        @RequestParam(required = false) String description) {
+        return categoryRepository.findCategoryByName(description);
+    }
 }

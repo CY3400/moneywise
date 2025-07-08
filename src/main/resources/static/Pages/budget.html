@@ -8,21 +8,32 @@
 </head>
 <body>
     <div id="navbar-container"></div>
+    <main class="container mt-4" id="container">
+        <div class="row justify-content-center">
+            <div id="budgetForm" class="border border-2 rounded p-4 col-md-4 text-center">
+                <fieldset>
+                    <legend class="fs-5 fw-bold text-primary">Budget</legend>
 
-    <div id="budgetForm">
-        <h2>Budget</h2>
-        <div id="budget_div">
-            <label for="startbudget">Start Budget</label>
-            <input type="text" id="startbudget">
+                    <div class="row justify-content-center">
+                        <div id="budget_div" class="mb-3 col-md-6 text-start">
+                            <label id="desc_label" for="startbudget" class="form-label">Start Budget</label>
+                            <input type="text" id="startbudget" class="form-control">
+                            <span id="desc_error" role="alert" class="text-danger d-none">Un budget est requis !</span>
+                        </div>
+
+                        <div id="date_div" class="mb-3 text-start col-md-6">
+                            <label class="form-label" for="date" id="date_label">Date</label>
+                            <input class="form-control" type="date" id="budgetdate">
+                            <span id="date_error" role="alert" class="text-danger d-none">Une date est recquise !</span>
+                        </div>
+                    </div>
+                </fieldset>
+            <div id="button_div" class="text-center">
+                <button id="addBudget"class="btn bg-primary">Envoyer</button>
+            </div>
         </div>
-        <div id="date_div">
-           <label for="date">Date</label>
-           <input type="date" id="date">
         </div>
-        <div id="button_div">
-            <button id="addBudget">Send</button>
-        </div>
-    </div>
+    </main>
         
     <script src="../js/navbar.js"></script>
     <script src="../JS/budget.js"></script>

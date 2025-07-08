@@ -31,4 +31,9 @@ public class PageController {
     public String showCategoryPage() {
         return "forward:/Pages/category.html";
     }
+
+    @GetMapping("/Budget")
+    public String showBudgetPage() {
+        return "forward:/Pages/budget.html";
+    }
 }

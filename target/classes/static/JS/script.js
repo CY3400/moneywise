@@ -4,7 +4,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const apiTransaction = "http://localhost:8080/api/transaction/category";
     const apiToday = "http://localhost:8080/api/transaction/today";
 
-    const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+    const monthNames = ["Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", "Aout", "Séptembre", "Octobre", "Novembre", "Décembre"];
     let budgets = 0;
     let sum_sub = 0;
     let tra = 0;

@@ -3,55 +3,59 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Home Page</title>
+    <title>Page d'Acceuil</title>
     <link rel="stylesheet" href="CSS/common.css">
 </head>
 <body>
     <div id="navbar-container"></div>
 
-    <div id="hp">
-        <div class="box1" id="budget_hp">
-            <h2 id="h2_budget">Informations on your budget</h2>
-            <span id="Month_Budget"></span><br><br>
-            <span id="Total_Gain"></span><br><br>
-            <span id="Total_Subscription"></span><br><br>
-            <span id="Budget_Left"></span><br><br>
-            <span id="U_Exp"></span><br><br>
-            <span id="P_Exp"></span><br><br>
-            <span id="B_E"></span><br><br>
-            <span id="Savings"></span>
+    <main class="m-4" id="container">
+        <div class="row justify-content-center">
+            <div class="border border-2 rounded p-4 col-md-4 text-start m-4" id="budget_hp">
+                <legend class="fs-5 fw-bold text-primary" id="h2_budget">Informations sur ton budget</legend>
+                <span id="Month_Budget"></span><br>
+                <span id="Total_Gain"></span><br>
+                <span id="Total_Subscription"></span><br>
+                <span id="Budget_Left"></span><br>
+                <span id="U_Exp"></span><br>
+                <span id="P_Exp"></span><br>
+                <span id="B_E"></span><br>
+                <span id="Savings"></span>
+            </div>
+
+            <div class="border border-2 rounded p-4 col-md-4 text-start m-4" id="sub_hp">
+                <legend class="fs-5 fw-bold text-primary" id="h2_sub">Informations sur tes abonnements</legend>
+                <span id="Total_Sub"></span><br>
+                <span id="Total_Paid"></span><br>
+                <span id="Total_Not_Paid"></span>
+            </div>
         </div>
 
-        <div class="box1" id="sub_hp">
-            <h2 id="h2_sub">Informations on your subscriptions</h2>
-            <span id="Total_Sub"></span><br><br>
-            <span id="Total_Paid"></span><br><br>
-            <span id="Total_Not_Paid"></span>
+        <div class="row justify-content-center">
+            <div class="border border-2 rounded p-4 col-md-4 text-start m-4" id="exp_hp">
+                <legend class="fs-5 fw-bold text-primary" id="h2_exp">Informations sur tes dépenses</legend>
+                <span id="Exp_U"></span><br>
+                <span id="Total_Exp_U"></span><br>
+                <span id="Prcnt_Exp_U"></span><br>
+                <span id="Daily_U"></span><br>
+                --------------------------------------<br>
+                <span id="Exp_P"></span><br>
+                <span id="Total_Exp_P"></span><br>
+                <span id="Prcnt_Exp_P"></span><br>
+                <span id="Daily_P"></span>
+            </div>
+            <div class="border border-2 rounded p-4 col-md-4 text-start m-4" id="money_hp">
+                <legend class="fs-5 fw-bold text-primary" id="h2_money">Information sur ton argent</legend>
+                <span id="Money_Saving"></span><br>
+                <span id="Money_U"></span><br>
+                <span id="Money_P"></span><br>
+                <span id="Money_S"></span><br>
+                <span id="Money_Total"></span>
+            </div>
         </div>
-        <div class="box2" id="exp_hp">
-            <h2 id="h2_exp">Informations on your expenses</h2>
-            <span id="Exp_U"></span><br><br>
-            <span id="Total_Exp_U"></span><br><br>
-            <span id="Prcnt_Exp_U"></span><br><br>
-            <span id="Daily_U"></span><br>
-            --------------------------------------<br>
-            <span id="Exp_P"></span><br><br>
-            <span id="Total_Exp_P"></span><br><br>
-            <span id="Prcnt_Exp_P"></span><br><br>
-            <span id="Daily_P"></span>
-        </div>
-        <div class="box2" id="money_hp">
-            <h2 id="h2_money">Information on your money</h2>
-            <span id="Money_Saving"></span><br><br>
-            <span id="Money_U"></span><br><br>
-            <span id="Money_P"></span><br><br>
-            <span id="Money_S"></span><br><br>
-            <span id="Money_Total"></span>
-        </div>
-    </div>
+    </main>
         
     <script src="../js/navbar.js"></script>
-
     <script src="JS/script.js"></script>
 </body>
 </html>

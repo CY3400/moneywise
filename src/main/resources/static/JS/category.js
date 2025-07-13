@@ -3,23 +3,59 @@ document.addEventListener("DOMContentLoaded", function() {
 
     const addButton=document.getElementById("category_btn");
     const CategoryTable = document.querySelector("#CategoryTable tbody");
-
+    const description = document.getElementById("description");
+    const desc_error = document.getElementById("desc_error");
+    const desc_label = document.getElementById("desc_label");
+    const allowedInputRegex = /^[\p{L}\p{N}\s\-']$/u;
+    const allowedKeys = ["Backspace", "Delete", "ArrowLeft", "ArrowRight", "Tab"];
     let currentPage = 1;
     const itemsPerPage = 5;
     let allData = [];
 
+    function enforceSanitizedInput(element, regex, allowedKeys) {
+        element.addEventListener("keydown", function (e) {
+            if (!allowedKeys.includes(e.key) && !regex.test(e.key)) {
+                e.preventDefault();
+            }
+        });
+
+        element.addEventListener("paste", function (e) {
+            e.preventDefault();
+            const pasted = (e.clipboardData || window.clipboardData).getData("text");
+            const sanitized = [...pasted].filter(c => regex.test(c)).join("");
+            document.execCommand("insertText", false, sanitized);
+        });
+    }
+
+    enforceSanitizedInput(description, allowedInputRegex, allowedKeys);
+    CategoryTable.addEventListener("focusin", (e) => {
+        if (e.target.classList.contains("editable-name")) {
+            enforceSanitizedInput(e.target, allowedInputRegex, allowedKeys);
+        }
+    });
+
+    function getTotalPages() {
+        return Math.ceil(allData.length / itemsPerPage);
+    }
+
+
+    description.addEventListener("input", function () {
+        isDescriptionValid(getCleanedDescription());
+    });
+
+    function getCleanedDescription() {
+        return description.value.trim().replace(/\s+/g, ' ');
+    }
+
     function buildQueryParams(description) {
-        const params = new URLSearchParams();
-        if (description) params.append("description", description);
-        return params.toString();
+        const desc = description?.trim();
+        return desc ? new URLSearchParams({ description: desc }).toString() : "";
     }
 
     addButton.addEventListener("click", function () {
-        var notNull = checkNull(description.value);
-
-        if (notNull == 1){
+        if (isDescriptionValid(getCleanedDescription())){
             const newCategory = {
-                description: description.value,
+                description: getCleanedDescription(),
                 status: 2
             };
     
@@ -44,8 +80,10 @@ document.addEventListener("DOMContentLoaded", function() {
         toast.show();
     }
 
-    function loadCategories(description) {
-        fetch(`${apiUrl}/filter?${buildQueryParams(description)}`)
+    function loadCategories(description = "") {
+        const endpoint = description ? `${apiUrl}/filter?${buildQueryParams(description)}` : apiUrl;
+
+        fetch(endpoint)
             .then(response => response.json())
             .then(data => {
                 allData = data;
@@ -65,8 +103,8 @@ document.addEventListener("DOMContentLoaded", function() {
 
         pageData.forEach(category => {
             const row = document.createElement("tr");
-            var buttons = `<button class="modify-btn btn bg-primary" data-id="${category.id}">Modifier</button>
-                        <button class="toggle-btn btn bg-primary" data-value="${category.status}" data-id="${category.id}">${category.status == 2 ? 'Désactiver' : 'Activer'}</button>`;
+            var buttons = `<button class="modify-btn btn bg-primary" data-id="${category.id}" title="Modifier la catégorie ${category.description}" aria-label="Modifier la catégorie ${category.description}">Modifier</button>
+                        <button class="toggle-btn btn bg-primary" data-value="${category.status}" title="${category.status == 2 ? 'Désactiver' : 'Activer'} la catégorie ${category.description}" aria-label="${category.status == 2 ? 'Désactiver' : 'Activer'} la catégorie ${category.description}" data-id="${category.id}">${category.status == 2 ? 'Désactiver' : 'Activer'}</button>`;
             row.innerHTML = `
                 <td contenteditable="true" spellcheck="false" data-id="${category.id}" data-original="${category.description.replace(/\s+/g, '')}" class="editable-name">${category.description}</td>
                 <td>${buttons}</td>
@@ -79,7 +117,7 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 
     function updatePagination() {
-        const totalPages = Math.ceil(allData.length / itemsPerPage);
+        const totalPages = getTotalPages();
 
         document.getElementById("pageInfo").textContent =
             `Page ${totalPages === 0 ? '0' : currentPage} sur ${totalPages}`;
@@ -104,7 +142,7 @@ document.addEventListener("DOMContentLoaded", function() {
     });
 
     document.getElementById("nextPage").addEventListener("click", () => {
-        const totalPages = Math.ceil(allData.length / itemsPerPage);
+        const totalPages = getTotalPages();
         if (currentPage < totalPages) {
             currentPage++;
             renderPage();
@@ -123,22 +161,13 @@ document.addEventListener("DOMContentLoaded", function() {
         }
     }
 
-    function checkNull(desc){
-        var result = 1;
-
-        if(desc == ""){
-            desc_error.classList.remove("d-none");
-            description.classList.add('border','border-danger');
-            desc_label.classList.add('text-danger');
-            result = 0;
-        }
-        else{
-            desc_error.classList.add("d-none");
-            description.classList.remove('border','border-danger');
-            desc_label.classList.remove('text-danger');
-        }
-
-        return result;
+    function isDescriptionValid(desc){
+        const isEmpty = desc === "";
+        desc_error.classList.toggle("d-none", !isEmpty);
+        description.classList.toggle("border", isEmpty);
+        description.classList.toggle("border-danger", isEmpty);
+        desc_label.classList.toggle("text-danger", isEmpty);
+        return !isEmpty;
     }
 
     CategoryTable.addEventListener("click", function (event) {
@@ -171,16 +200,13 @@ document.addEventListener("DOMContentLoaded", function() {
                     })
                 })
                 .then(() => {
-                    loadCategories(description.value);
+                    loadCategories(getCleanedDescription());
                 })
                 .catch(error => console.error("Erreur lors de la récupération :", error));
         }
         else if(event.target.classList.contains("toggle-btn")){
-            let descValue, status = null;
-
-            descValue = event.target.dataset.value;
-
-            descValue == 1 ? status = 2 : status = 1;
+            const currentStatus = parseInt(event.target.dataset.value);
+            const status = currentStatus === 1 ? 2 : 1;
 
             fetch(`${apiUrl}/${categoryId}`)
                 .then(response => response.json())
@@ -196,7 +222,7 @@ document.addEventListener("DOMContentLoaded", function() {
                     });
                 })
                 .then(response => response.json())
-                .then(() => loadCategories(description.value))
+                .then(() => loadCategories(getCleanedDescription()))
                 .catch(error => console.error("Erreur lors de la mise à jour :", error));
         }
     });
@@ -204,11 +230,11 @@ document.addEventListener("DOMContentLoaded", function() {
     description.addEventListener("keyup", function(){
         currentPage = 1;
 
-        loadCategories(description.value);
+        loadCategories(getCleanedDescription());
     });
 
     function normalizeText(text) {
-        return text.replace(/\s+/g, '');
+        return text.trim().replace(/\s+/g, '');
     }
 
     function updateRowModificationStatus(row) {

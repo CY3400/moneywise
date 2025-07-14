@@ -8,6 +8,19 @@ document.addEventListener("DOMContentLoaded", function(){
     const desc_label = document.getElementById("desc_label");
     const type_error = document.getElementById("type_error");
     const type_label = document.getElementById("type_label");
+    let currentPage = 1;
+    const itemsPerPage = 5;
+    let allData = [];
+
+    function getSelectedType() {
+        return document.querySelector('input[name="types"]:checked');
+    }
+
+    function resetForm(){
+        description.value = "";
+        document.querySelectorAll('input[name="types"]').forEach(radio => radio.checked = false);
+
+    }
 
     function buildQueryParams(description, type) {
         const params = new URLSearchParams();
@@ -16,10 +29,6 @@ document.addEventListener("DOMContentLoaded", function(){
         return params.toString();
     }
 
-    let currentPage = 1;
-    const itemsPerPage = 5;
-    let allData = [];
-
     function loadDescriptions(description,type) {
         fetch(`${apiUrl}/filter?${buildQueryParams(description,type)}`)
             .then(response => response.json())
@@ -27,7 +36,7 @@ document.addEventListener("DOMContentLoaded", function(){
                 allData = data;
                 renderPage();
             })
-            .catch(error => console.error("Erreur lors du chargement des transactions:", error));
+            .catch(error => console.error("Erreur lors du chargement des descriptions:", error));
     }
 
     function renderPage() {
@@ -51,8 +60,8 @@ document.addEventListener("DOMContentLoaded", function(){
                     </select>
                 </td>
                 <td>
-                    <button class="modify-btn btn bg-primary" data-id="${description.id}">Modifier</button>
-                    <button class="toggle-btn btn bg-primary" data-value="${description.status}" data-id="${description.id}">${description.status == 2 ? 'Désactiver' : 'Activer'}</button>
+                    <button class="modify-btn btn bg-primary" data-id="${description.id}" aria-label="Modifier la catégorie ${description.description}" title="Modifier la description ${description.description}">Modifier</button>
+                    <button class="toggle-btn btn bg-primary" data-value="${description.status}" data-id="${description.id}" title="${description.status == 2 ? 'Désactiver' : 'Activer'} la description ${description.description}" aria-label="${description.status == 2 ? 'Désactiver' : 'Activer'} la description ${description.description}">${description.status == 2 ? 'Désactiver' : 'Activer'}</button>
                 </td>
             `;
             DescriptionTable.appendChild(row);
@@ -65,11 +74,13 @@ document.addEventListener("DOMContentLoaded", function(){
     function updatePagination() {
         const totalPages = Math.ceil(allData.length / itemsPerPage);
 
-        document.getElementById("pageInfo").textContent =
-            `Page ${totalPages === 0 ? '0' : currentPage} sur ${totalPages}`;
+        document.getElementById("pageInfo").textContent = `Page ${totalPages === 0 ? '0' : currentPage} sur ${totalPages}`;
 
         const prevBtn = document.getElementById("prevPage");
         const nextBtn = document.getElementById("nextPage");
+
+        prevBtn.classList.toggle("d-none", totalPages <= 1);
+        nextBtn.classList.toggle("d-none", totalPages <= 1);
 
         if (totalPages === 0) {
             prevBtn.disabled = true;
@@ -99,7 +110,7 @@ document.addEventListener("DOMContentLoaded", function(){
     DescriptionTable.addEventListener("click", function (event) {
         let descId, descValue, status = null;
 
-        const selectedType = document.querySelector('input[name="types"]:checked');
+        const selectedType = getSelectedType();
 
         if (event.target.classList.contains("toggle-btn")) {
             descId = event.target.dataset.id;
@@ -121,7 +132,7 @@ document.addEventListener("DOMContentLoaded", function(){
                     });
                 })
                 .then(response => response.json())
-                .then(() => loadDescriptions(description.value,selectedType ? selectedType.value : null))
+                .then(() => loadDescriptions(description.value,getSelectedType()?.value || null))
                 .catch(error => console.error("Erreur lors de la mise à jour :", error));
         }
         else if (event.target.classList.contains("modify-btn")) {
@@ -156,7 +167,7 @@ document.addEventListener("DOMContentLoaded", function(){
                     })
                 })
                 .then(() => {
-                    loadDescriptions(description.value,selectedType ? selectedType.value : null);
+                    loadDescriptions(description.value,getSelectedType()?.value || null);
                 })
                 .catch(error => console.error("Erreur lors de la récupération :", error));
         }
@@ -214,13 +225,13 @@ document.addEventListener("DOMContentLoaded", function(){
     });
 
     function checkNull(desc, type){
-        var result = 1;
+        var isValid = true;
 
         if(desc == ""){
             desc_error.classList.remove("d-none");
             description.classList.add('border','border-danger');
             desc_label.classList.add('text-danger');
-            result = 0;
+            isValid = false;
         }
         else{
             desc_error.classList.add("d-none");
@@ -231,22 +242,20 @@ document.addEventListener("DOMContentLoaded", function(){
         if(!type){
             type_error.classList.remove("d-none");
             type_label.classList.add('text-danger');
-            result = 0;
+            isValid = false;
         }
         else{
             type_error.classList.add("d-none");
             type_label.classList.remove('text-danger');
         }
 
-        return result;
+        return isValid;
     }
 
     addButton.addEventListener("click", function () {
-        const selectedType = document.querySelector('input[name="types"]:checked');
+        const selectedType = getSelectedType();
 
-        var notNull = checkNull(description.value, selectedType);
-
-        if(notNull == 1){
+        if(checkNull(description.value, selectedType)){
             const newDescription = {
                 description: description.value,
                 type: selectedType.value,
@@ -260,9 +269,8 @@ document.addEventListener("DOMContentLoaded", function(){
             })
             .then(response => response.json())
             .then(() => {
-                description.value = "";
-                document.querySelectorAll('input[name="types"]').forEach(radio => radio.checked = false);
-                loadDescriptions();
+                resetForm();
+                loadDescriptions("", "");
                 showToast('successToast');
             })
             .catch(() => showToast('errorToast'));
@@ -270,7 +278,7 @@ document.addEventListener("DOMContentLoaded", function(){
     });
 
     description.addEventListener("keyup", function(){
-        const selectedType = document.querySelector('input[name="types"]:checked');
+        const selectedType = getSelectedType();
 
         currentPage = 1;
 
@@ -302,5 +310,5 @@ document.addEventListener("DOMContentLoaded", function(){
         toast.show();
     }
 
-    loadDescriptions(null, null);
+    loadDescriptions("", "");
 })

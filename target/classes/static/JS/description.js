@@ -79,9 +79,6 @@ document.addEventListener("DOMContentLoaded", function(){
         const prevBtn = document.getElementById("prevPage");
         const nextBtn = document.getElementById("nextPage");
 
-        prevBtn.classList.toggle("d-none", totalPages <= 1);
-        nextBtn.classList.toggle("d-none", totalPages <= 1);
-
         if (totalPages === 0) {
             prevBtn.disabled = true;
             nextBtn.disabled = true;

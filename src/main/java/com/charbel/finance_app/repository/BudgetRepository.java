@@ -16,7 +16,7 @@ public interface BudgetRepository extends JpaRepository<Budget, Long> {
     @Query(value = "SELECT COALESCE(SUM(t.amount), 0) FROM Transaction t WHERE t.cat_id = 1 AND MONTH(t.date_transaction) = MONTH(CURRENT_DATE - INTERVAL 1 MONTH) AND YEAR(t.date_transaction) = YEAR(CURRENT_DATE - INTERVAL 1 MONTH)", nativeQuery = true)
     Long getTotalGainsLastMonth();
 
-    @Query(value = "SELECT COALESCE(SUM(t.amount), 0) FROM Transaction t WHERE t.cat_id != 1 AND MONTH(t.date_transaction) = MONTH(CURRENT_DATE - INTERVAL 1 MONTH) AND YEAR(t.date_transaction) = YEAR(CURRENT_DATE - INTERVAL 1 MONTH)", nativeQuery = true)
+    @Query(value = "SELECT SUM(AMOUNT) FROM (SELECT t.amount FROM finance_db.Transaction t WHERE t.cat_id != 1 AND MONTH(t.date_transaction) = MONTH(CURRENT_DATE - INTERVAL 1 MONTH) AND YEAR(t.date_transaction) = YEAR(CURRENT_DATE - INTERVAL 1 MONTH) UNION SELECT t.amount FROM finance_db.Subscription t WHERE t.paid = 1 AND MONTH(t.date_paid) = MONTH(CURRENT_DATE - INTERVAL 1 MONTH) AND YEAR(t.date_paid) = YEAR(CURRENT_DATE - INTERVAL 1 MONTH)) AS A", nativeQuery = true)
     Long getTotalDepensesLastMonth();
 
     @Query(value="select * from finance_db.budget WHERE MONTH(date_budget) = MONTH(CURRENT_DATE) AND YEAR(date_budget) = YEAR(CURRENT_DATE)",nativeQuery = true)

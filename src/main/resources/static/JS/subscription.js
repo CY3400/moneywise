@@ -238,8 +238,9 @@ document.addEventListener("DOMContentLoaded", function() {
     });
 
     document.getElementById("nextPage").addEventListener("click", () => {
-        if(currentPage < totalPages) {
-            currentPage ++;
+        const totalPages = Math.ceil(allData.length / itemsPerPage);
+        if (currentPage < totalPages) {
+            currentPage++;
             renderPage();
         }
     });
